@@ -1,0 +1,49 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.label {
+  font-size: 14px;
+  color: #374151;
+  flex: 1;
+}
+
+.track {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: #d1d5db;
+  transition: background-color 0.2s;
+  position: relative;
+  flex-shrink: 0;
+  outline: none;
+}
+
+.track:focus-visible {
+  box-shadow: 0 0 0 2px #4f46e5;
+}
+
+.trackChecked {
+  background-color: #4f46e5;
+}
+
+.thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.thumbChecked {
+  transform: translateX(20px);
+}

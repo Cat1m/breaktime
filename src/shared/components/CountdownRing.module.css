@@ -1,0 +1,33 @@
+.container {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+}
+
+.svg {
+  transform: rotate(-90deg);
+}
+
+.track {
+  stroke: #e5e7eb;
+  fill: none;
+}
+
+.progress {
+  stroke: #4f46e5;
+  fill: none;
+  transition: stroke-dashoffset 1s linear;
+  stroke-linecap: round;
+}
+
+.time {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 36px;
+  font-weight: 700;
+  color: #111827;
+  font-variant-numeric: tabular-nums;
+}
