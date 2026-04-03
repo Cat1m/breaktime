@@ -1,0 +1,20 @@
+{
+  "identifier": "default",
+  "description": "Default capability for BreakTime",
+  "windows": ["settings", "overlay-*"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-create",
+    "core:window:allow-close",
+    "core:window:allow-set-fullscreen",
+    "core:window:allow-set-always-on-top",
+    "core:window:allow-set-decorations",
+    "core:window:allow-set-skip-taskbar",
+    "core:window:allow-show",
+    "core:window:allow-hide",
+    "core:window:allow-set-ignore-cursor-events",
+    "core:event:default",
+    "shell:default",
+    "dialog:default"
+  ]
+}
