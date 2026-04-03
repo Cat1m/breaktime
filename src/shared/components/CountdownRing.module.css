@@ -7,11 +7,13 @@
 
 .svg {
   transform: rotate(-90deg);
+  shape-rendering: geometricPrecision;
 }
 
 .track {
   stroke: #e5e7eb;
   fill: none;
+  stroke-linecap: round;
 }
 
 .progress {

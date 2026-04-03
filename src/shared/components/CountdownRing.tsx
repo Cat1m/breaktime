@@ -13,12 +13,17 @@ function formatTime(secs: number): string {
 }
 
 export function CountdownRing({ remainingSecs, totalSecs, size = 200 }: CountdownRingProps) {
-  const strokeWidth = 10;
+  const strokeWidth = 8;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const progress = totalSecs > 0 ? remainingSecs / totalSecs : 0;
   const dashoffset = circumference * (1 - progress);
   const center = size / 2;
+
+  // Add 2px padding in viewBox to prevent anti-alias clipping at edges
+  const vbPad = 2;
+  const vbSize = size + vbPad * 2;
+  const vbOffset = -vbPad;
 
   return (
     <div className={styles.container} style={{ width: size, height: size }}>
@@ -26,7 +31,8 @@ export function CountdownRing({ remainingSecs, totalSecs, size = 200 }: Countdow
         className={styles.svg}
         width={size}
         height={size}
-        viewBox={`0 0 ${size} ${size}`}
+        viewBox={`${vbOffset} ${vbOffset} ${vbSize} ${vbSize}`}
+        overflow="visible"
       >
         <circle
           className={`${styles.track} countdown-ring-track`}

@@ -43,10 +43,10 @@ const DARK_BG_SCHEME: Record<string, string> = {
   "--overlay-ring-time": "white",
   "--overlay-text-shadow": "0 1px 4px rgba(0,0,0,0.5)",
   "--overlay-scrim-bg": "rgba(0,0,0,0.45)",
-  "--overlay-glow": "0 0 60px 20px rgba(129,140,248,0.3)",
-  "--overlay-glow-ring": "0 0 80px 30px rgba(129,140,248,0.4)",
-  "--overlay-glow-btn": "0 0 40px 12px rgba(129,140,248,0.25)",
-  "--overlay-glow-color": "rgba(129,140,248,0.3)",
+  "--overlay-glow": "0 0 16px 4px rgba(129,140,248,0.15)",
+  "--overlay-glow-ring": "0 0 20px 6px rgba(129,140,248,0.18)",
+  "--overlay-glow-btn": "0 0 12px 3px rgba(129,140,248,0.12)",
+  "--overlay-glow-color": "rgba(129,140,248,0.2)",
 };
 
 const LIGHT_BG_SCHEME: Record<string, string> = {
@@ -63,10 +63,10 @@ const LIGHT_BG_SCHEME: Record<string, string> = {
   "--overlay-ring-time": "rgba(15,23,42,0.95)",
   "--overlay-text-shadow": "0 1px 4px rgba(255,255,255,0.3)",
   "--overlay-scrim-bg": "rgba(0,0,0,0.25)",
-  "--overlay-glow": "0 0 60px 20px rgba(100,100,100,0.3)",
-  "--overlay-glow-ring": "0 0 80px 30px rgba(100,100,100,0.35)",
-  "--overlay-glow-btn": "0 0 40px 12px rgba(100,100,100,0.25)",
-  "--overlay-glow-color": "rgba(100,100,100,0.3)",
+  "--overlay-glow": "0 0 30px 8px rgba(100,100,100,0.2)",
+  "--overlay-glow-ring": "0 0 40px 12px rgba(100,100,100,0.22)",
+  "--overlay-glow-btn": "0 0 20px 6px rgba(100,100,100,0.15)",
+  "--overlay-glow-color": "rgba(100,100,100,0.2)",
 };
 
 function analyzeImage(img: HTMLImageElement): Record<string, string> {
@@ -133,9 +133,9 @@ function analyzeImage(img: HTMLImageElement): Record<string, string> {
   const glowColor = `hsla(${Math.round(glowH)}, ${Math.round(boostSat * 100)}%, ${Math.round(glowLight * 100)}%, 0.5)`;
   const glowStrong = `hsla(${Math.round(glowH)}, ${Math.round(boostSat * 100)}%, ${Math.round(glowLight * 100)}%, 0.7)`;
 
-  scheme["--overlay-glow"] = `0 0 60px 20px ${glowColor}`;
-  scheme["--overlay-glow-ring"] = `0 0 80px 30px ${glowStrong}`;
-  scheme["--overlay-glow-btn"] = `0 0 40px 12px ${glowColor}`;
+  scheme["--overlay-glow"] = `0 0 16px 4px ${glowColor}`;
+  scheme["--overlay-glow-ring"] = `0 0 20px 6px ${glowStrong}`;
+  scheme["--overlay-glow-btn"] = `0 0 12px 3px ${glowColor}`;
   scheme["--overlay-glow-color"] = glowColor;
 
   return scheme;
