@@ -62,19 +62,25 @@
   min-height: 0;
 }
 
+/* Message text with ambient glow backdrop */
 .message {
-  max-width: 600px;
+  max-width: 640px;
   text-align: center;
-  font-size: 22px;
+  font-size: 26px;
   line-height: 1.6;
   font-weight: 300;
-  color: var(--overlay-text-primary, rgba(255, 255, 255, 0.9));
+  color: white;
   margin: 0;
-  text-shadow: var(--overlay-text-shadow, 0 1px 4px rgba(0, 0, 0, 0.5));
-  transition: color 300ms ease, text-shadow 300ms ease;
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.6);
+  padding: 20px 32px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--overlay-glow, 0 0 60px 20px rgba(129,140,248,0.3));
+  transition: text-shadow 300ms ease, box-shadow 500ms ease;
 }
 
-/* Skip button — pinned to bottom */
+/* Skip button — pinned to bottom, with ambient glow */
 .skipButton {
   flex-shrink: 0;
   padding: 14px 48px;
@@ -86,11 +92,20 @@
   border-radius: 10px;
   cursor: pointer;
   backdrop-filter: blur(8px);
-  transition: color 300ms ease, background 300ms ease, border-color 300ms ease;
+  box-shadow: var(--overlay-glow-btn, 0 0 40px 12px rgba(129,140,248,0.25));
+  transition: color 300ms ease, background 300ms ease, border-color 300ms ease, box-shadow 500ms ease;
 }
 
 .skipButton:hover {
   background: var(--overlay-btn-hover-bg, rgba(255, 255, 255, 0.28));
+}
+
+/* CountdownRing wrapper — ambient glow around the ring */
+.ringWrapper {
+  position: relative;
+  border-radius: 50%;
+  box-shadow: var(--overlay-glow-ring, 0 0 80px 30px rgba(129,140,248,0.4));
+  transition: box-shadow 500ms ease;
 }
 
 /* CountdownRing — adaptive overrides */

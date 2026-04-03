@@ -58,7 +58,9 @@ export function BreakOverlay() {
         )}
 
         <div className={styles.center}>
-          <CountdownRing remainingSecs={breakState.remainingSecs} totalSecs={breakState.totalDuration} size={180} />
+          <div className={styles.ringWrapper}>
+            <CountdownRing remainingSecs={breakState.remainingSecs} totalSecs={breakState.totalDuration} size={180} />
+          </div>
           <p className={styles.message}>{breakState.message}</p>
 
           {!hasImage && (

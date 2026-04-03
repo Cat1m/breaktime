@@ -43,6 +43,10 @@ const DARK_BG_SCHEME: Record<string, string> = {
   "--overlay-ring-time": "white",
   "--overlay-text-shadow": "0 1px 4px rgba(0,0,0,0.5)",
   "--overlay-scrim-bg": "rgba(0,0,0,0.45)",
+  "--overlay-glow": "0 0 60px 20px rgba(129,140,248,0.3)",
+  "--overlay-glow-ring": "0 0 80px 30px rgba(129,140,248,0.4)",
+  "--overlay-glow-btn": "0 0 40px 12px rgba(129,140,248,0.25)",
+  "--overlay-glow-color": "rgba(129,140,248,0.3)",
 };
 
 const LIGHT_BG_SCHEME: Record<string, string> = {
@@ -59,6 +63,10 @@ const LIGHT_BG_SCHEME: Record<string, string> = {
   "--overlay-ring-time": "rgba(15,23,42,0.95)",
   "--overlay-text-shadow": "0 1px 4px rgba(255,255,255,0.3)",
   "--overlay-scrim-bg": "rgba(0,0,0,0.25)",
+  "--overlay-glow": "0 0 60px 20px rgba(100,100,100,0.3)",
+  "--overlay-glow-ring": "0 0 80px 30px rgba(100,100,100,0.35)",
+  "--overlay-glow-btn": "0 0 40px 12px rgba(100,100,100,0.25)",
+  "--overlay-glow-color": "rgba(100,100,100,0.3)",
 };
 
 function analyzeImage(img: HTMLImageElement): Record<string, string> {
@@ -80,21 +88,26 @@ function analyzeImage(img: HTMLImageElement): Record<string, string> {
   const pixelCount = w * h;
 
   let totalLum = 0;
+  let totalR = 0, totalG = 0, totalB = 0;
   let hueSin = 0, hueCos = 0, totalSat = 0;
 
   for (let i = 0; i < data.length; i += 4) {
     const r = data[i], g = data[i + 1], b = data[i + 2];
     totalLum += relativeLuminance(r, g, b);
+    totalR += r; totalG += g; totalB += b;
 
     const [hue, sat] = rgbToHsl(r, g, b);
     const hueRad = (hue * Math.PI) / 180;
-    hueSin += Math.sin(hueRad) * sat; // weight by saturation
+    hueSin += Math.sin(hueRad) * sat;
     hueCos += Math.cos(hueRad) * sat;
     totalSat += sat;
   }
 
   const avgLum = totalLum / pixelCount;
   const avgSat = totalSat / pixelCount;
+  const avgR = Math.round(totalR / pixelCount);
+  const avgG = Math.round(totalG / pixelCount);
+  const avgB = Math.round(totalB / pixelCount);
 
   // Effective luminance after scrim
   // For dark-bg scheme scrim=0.45, for light-bg scrim=0.25
@@ -111,6 +124,19 @@ function analyzeImage(img: HTMLImageElement): Record<string, string> {
     const [accentSat, accentLight] = isLightBg ? [65, 42] : [70, 72];
     scheme["--overlay-ring-progress"] = `hsl(${Math.round(avgHue)}, ${accentSat}%, ${accentLight}%)`;
   }
+
+  // Ambient glow — soft colored light from the image behind UI elements
+  // Boost saturation for more vivid glow
+  const [glowH, glowS] = rgbToHsl(avgR, avgG, avgB);
+  const boostSat = Math.min(glowS * 1.5, 1);
+  const glowLight = isLightBg ? 0.35 : 0.65;
+  const glowColor = `hsla(${Math.round(glowH)}, ${Math.round(boostSat * 100)}%, ${Math.round(glowLight * 100)}%, 0.5)`;
+  const glowStrong = `hsla(${Math.round(glowH)}, ${Math.round(boostSat * 100)}%, ${Math.round(glowLight * 100)}%, 0.7)`;
+
+  scheme["--overlay-glow"] = `0 0 60px 20px ${glowColor}`;
+  scheme["--overlay-glow-ring"] = `0 0 80px 30px ${glowStrong}`;
+  scheme["--overlay-glow-btn"] = `0 0 40px 12px ${glowColor}`;
+  scheme["--overlay-glow-color"] = glowColor;
 
   return scheme;
 }
