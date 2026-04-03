@@ -58,6 +58,16 @@ A single `index.html` entry point serves both window types. `App.tsx` reads `?wi
 - `shared/` — Reusable components (`Button`, `Toggle`, `NumberInput`, `CountdownRing`), hooks (`useAudio`, `useIdleStatus`), `types.ts` (shared TypeScript interfaces mirroring Rust structs)
 - `locales/` — i18n JSON files (`en.json`, `vi.json`)
 
+### Overlay visual system
+
+- Background image rendered as fullscreen `<img>` with `object-fit: cover` (z-index 0)
+- Adaptive scrim layer adjusts opacity based on image luminance (z-index 1)
+- `useAdaptiveColor.ts` hook: one-shot canvas sampling (64x64 downscale, center 50% region) → sets 13 CSS variables for text/ring/button colors + ambient glow
+- Ambient glow: subtle `box-shadow` on ring, message, and button — color extracted from image average hue
+- Default embedded background (`src-tauri/resources/default_bg.jpg`) used when no custom image is set
+- Image cache: `AppStateInner.cached_image` stores (path, base64) — only reloads when path changes
+- Drag & drop image support via Tauri `onDragDropEvent`
+
 ### Event-driven communication (Rust ↔ Frontend)
 
 Events defined in `core/events.rs`: `break:start`, `break:end`, `break:tick`, `timer:tick`, `timer:status-changed`, `idle:changed`, `settings:changed`. Frontend listens via `@tauri-apps/api`. The overlay window fetches `current_break_payload` from state on mount via the `get_active_break` command as a fallback if it misses the event.
@@ -72,3 +82,8 @@ Windows-specific dependencies are gated with `#[cfg(windows)]` / `[target.'cfg(w
 - Rust l10n for tray/tooltip is hardcoded in `core/l10n.rs`; frontend l10n uses JSON files in `src/locales/`
 - CSS Modules (`.module.css`) are used throughout the frontend — no global CSS framework
 - Tauri capabilities for window permissions are in `src-tauri/capabilities/default.json`; overlay windows use wildcard label `overlay-*`
+- Single-instance enforced via `tauri-plugin-single-instance` — second launch shows settings window
+- Settings window hides on close (not quit) — app stays in tray; only Tray > Quit exits
+- `NumberInput` uses local draft state while focused — validates only on blur/Enter to avoid cursor jumping
+- Tray menu rebuilds on language change and pause/resume toggle (labels update dynamically)
+- GitHub: https://github.com/Cat1m/breaktime

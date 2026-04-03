@@ -6,7 +6,7 @@ import { BreakStartPayload, BreakTickPayload } from "../../shared/types";
 
 interface BreakState {
   active: boolean;
-  breakType: "mini" | "long" | null;
+  breakType: "mini" | "long" | "attendance" | null;
   remainingSecs: number;
   totalDuration: number;
   message: string;
@@ -38,7 +38,7 @@ export function useBreakEvents(): BreakState {
 
     setState({
       active: true,
-      breakType: payload.break_type as "mini" | "long",
+      breakType: payload.break_type as "mini" | "long" | "attendance",
       remainingSecs: payload.duration_secs,
       totalDuration: payload.duration_secs,
       message: payload.message,

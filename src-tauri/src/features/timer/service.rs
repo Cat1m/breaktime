@@ -1,4 +1,5 @@
 use tauri::{AppHandle, Emitter, Manager};
+use chrono::{Local, Timelike, Datelike, Weekday, NaiveTime};
 use crate::core::state::{AppState, TimerStatus, BreakType};
 use crate::core::events::*;
 
@@ -47,6 +48,22 @@ pub async fn start_timer_loop(app: AppHandle, state: AppState) {
         // 3. Neu dang paused hoac on_break -> skip
         if s.timer_status != TimerStatus::Running {
             continue;
+        }
+
+        // 3b. Attendance reminder check (once per minute)
+        if s.settings.attendance_reminder_enabled {
+            let now = Local::now();
+            if now.second() == 0 && now.weekday() != Weekday::Sun {
+                let app_clone = app.clone();
+                let state_clone = state.clone();
+                drop(s);
+                check_attendance_reminder(&app_clone, &state_clone).await;
+                s = state.lock().await;
+                // If attendance triggered a break, skip the rest of this tick
+                if s.timer_status == TimerStatus::OnBreak {
+                    continue;
+                }
+            }
         }
 
         // 4. Tang elapsed counters
@@ -107,6 +124,7 @@ async fn trigger_break_standalone(app: &AppHandle, state: &AppState, break_type:
         let duration = match break_type {
             BreakType::Mini => s.settings.mini_break_duration,
             BreakType::Long => s.settings.long_break_duration,
+            BreakType::Attendance => 15, // attendance uses its own trigger path
         };
 
         let message = pick_random_text(&s.settings.custom_texts, &s.settings.language);
@@ -116,6 +134,7 @@ async fn trigger_break_standalone(app: &AppHandle, state: &AppState, break_type:
             break_type: match break_type {
                 BreakType::Mini => "mini",
                 BreakType::Long => "long",
+                BreakType::Attendance => "attendance",
             }
             .into(),
             duration_secs: duration,
@@ -246,6 +265,7 @@ pub async fn end_break(app: &AppHandle, state: &AppState) {
     match s.current_break_type.take() {
         Some(BreakType::Mini) => s.reset_mini_timer(),
         Some(BreakType::Long) => s.reset_long_timer(),
+        Some(BreakType::Attendance) => {} // no timer reset needed
         None => {}
     }
     s.timer_status = TimerStatus::Running;
@@ -253,4 +273,143 @@ pub async fn end_break(app: &AppHandle, state: &AppState) {
     drop(s);
     destroy_overlay_window(app);
     app.emit(BREAK_END, ()).ok();
+}
+
+/// Check if any attendance time is due and trigger overlay
+async fn check_attendance_reminder(app: &AppHandle, state: &AppState) {
+    let now = Local::now();
+    let today_str = now.format("%Y-%m-%d").to_string();
+    let current_time = now.time();
+
+    let mut s = state.lock().await;
+
+    // Day rollover → clear reminders
+    if s.attendance_reminded_date.as_deref() != Some(&today_str) {
+        s.attendance_reminded_today.clear();
+        s.attendance_reminded_date = Some(today_str);
+    }
+
+    // Already on break → skip
+    if s.timer_status == TimerStatus::OnBreak {
+        return;
+    }
+
+    let times = s.settings.attendance_times.clone();
+    let lang = s.settings.language.clone();
+
+    for time_str in &times {
+        // Skip already-reminded times
+        if s.attendance_reminded_today.contains(time_str) {
+            continue;
+        }
+
+        // Parse "HH:MM"
+        let target = match NaiveTime::parse_from_str(time_str, "%H:%M") {
+            Ok(t) => t,
+            Err(_) => continue,
+        };
+
+        // Check if current_time is within [target, target + 60min)
+        let diff = current_time.signed_duration_since(target);
+        let diff_secs = diff.num_seconds();
+        if diff_secs >= 0 && diff_secs < 3600 {
+            // Mark as reminded
+            s.attendance_reminded_today.push(time_str.clone());
+
+            // Build message
+            let message = build_attendance_message(time_str, &lang);
+            let image_base64 = s.get_image_base64();
+
+            let payload = BreakStartPayload {
+                break_type: "attendance".into(),
+                duration_secs: 15,
+                message,
+                image_base64,
+            };
+
+            s.timer_status = TimerStatus::OnBreak;
+            s.current_break_type = Some(BreakType::Attendance);
+            s.current_break_payload = Some(payload);
+
+            let play_sound = s.settings.sound_enabled;
+            let volume = s.settings.sound_volume;
+            drop(s);
+
+            // Create overlay windows
+            create_overlay_window(app);
+            tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+
+            // Emit break:start
+            {
+                let s = state.lock().await;
+                if let Some(payload) = &s.current_break_payload {
+                    app.emit(BREAK_START, payload.clone()).ok();
+                }
+            }
+
+            // Play sound
+            if play_sound {
+                tokio::task::spawn_blocking(move || {
+                    crate::features::audio::service::play_sound_blocking(volume).ok();
+                });
+            }
+
+            return; // Only one reminder at a time
+        }
+    }
+}
+
+/// Check attendance on startup (called once with delay)
+pub async fn check_attendance_on_startup(app: &AppHandle, state: &AppState) {
+    let now = Local::now();
+
+    // Skip Sunday
+    if now.weekday() == Weekday::Sun {
+        return;
+    }
+
+    let s = state.lock().await;
+    if !s.settings.attendance_reminder_enabled {
+        return;
+    }
+
+    let times = s.settings.attendance_times.clone();
+    drop(s);
+
+    let current_time = now.time();
+
+    for time_str in &times {
+        let target = match NaiveTime::parse_from_str(time_str, "%H:%M") {
+            Ok(t) => t,
+            Err(_) => continue,
+        };
+
+        let diff = current_time.signed_duration_since(target);
+        let diff_secs = diff.num_seconds();
+        if diff_secs >= 0 && diff_secs < 3600 {
+            // Within 1-hour window — trigger reminder
+            check_attendance_reminder(app, state).await;
+            return;
+        }
+    }
+}
+
+fn build_attendance_message(
+    time_str: &str,
+    lang: &crate::features::settings::model::Language,
+) -> String {
+    // Format time for display: "06:55" → "06:55 AM"
+    let display_time = match NaiveTime::parse_from_str(time_str, "%H:%M") {
+        Ok(t) => t.format("%I:%M %p").to_string(),
+        Err(_) => time_str.to_string(),
+    };
+
+    match lang {
+        crate::features::settings::model::Language::Vi => {
+            format!("Chấm công {} chưa?", display_time)
+        }
+        crate::features::settings::model::Language::En => {
+            format!("Time to check in at {}!", display_time)
+        }
+    }
 }
