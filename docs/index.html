@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sipping — Keep sipping, stay hydrated</title>
+  <meta name="description" content="A gentle break reminder app that helps you stay hydrated and healthy. Free, open-source, cross-platform.">
+  <meta property="og:title" content="Sipping — Break Reminder & Hydration App">
+  <meta property="og:description" content="Fullscreen break overlays, custom sounds, idle detection. Free & open-source.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cat1m.github.io/breaktime">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --border: #2a2d3a;
+      --text: #e4e4e7;
+      --text-muted: #9ca3af;
+      --primary: #6366f1;
+      --primary-hover: #818cf8;
+      --accent: #22c55e;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--primary-hover); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 80px 0 60px;
+    }
+
+    .hero-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .hero .tagline {
+      font-size: 20px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .hero .description {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto 36px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      text-decoration: none;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 24px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+    .btn-ghost:hover { border-color: var(--text-muted); color: var(--text); text-decoration: none; }
+
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 13px;
+      border-radius: 8px;
+    }
+
+    .download-group { margin-bottom: 16px; }
+
+    .os-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 12px;
+    }
+
+    .other-toggle {
+      color: var(--text-muted);
+      font-size: 14px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      margin-top: 12px;
+      font-family: inherit;
+    }
+    .other-toggle:hover { color: var(--text); }
+
+    .other-platforms {
+      display: none;
+      margin-top: 20px;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .other-platforms.show { display: flex; }
+
+    /* Features */
+    .features {
+      padding: 60px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .features h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 40px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .feature-card .icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+      text-align: center;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a { color: var(--text-muted); font-size: 14px; }
+    .footer-links a:hover { color: var(--text); }
+
+    .footer-tagline {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .hero { padding: 48px 0 40px; }
+      .hero h1 { font-size: 32px; }
+      .hero .tagline { font-size: 17px; }
+      .features-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <span class="hero-icon">💧</span>
+      <h1>Sipping</h1>
+      <p class="tagline">Keep sipping, stay hydrated</p>
+      <p class="description">
+        A gentle break reminder that shows fullscreen overlays when it's time to rest.
+        Custom sounds, background images, idle detection — simple and distraction-free.
+      </p>
+
+      <div class="download-group">
+        <a id="main-download" class="btn btn-primary" href="#">
+          <span id="dl-icon">⬇</span>
+          <span id="dl-text">Download</span>
+        </a>
+        <p class="os-label" id="os-label"></p>
+      </div>
+
+      <button class="other-toggle" onclick="toggleOther()">All platforms ▾</button>
+
+      <div class="other-platforms" id="other-platforms">
+        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64-setup.exe">Windows (.exe)</a>
+        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64_en-US.msi">Windows (.msi)</a>
+        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_aarch64.dmg">macOS (Apple Silicon)</a>
+        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64.dmg">macOS (Intel)</a>
+        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_amd64.AppImage">Linux (.AppImage)</a>
+        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_amd64.deb">Linux (.deb)</a>
+        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping-0.1.0-1.x86_64.rpm">Linux (.rpm)</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="container">
+      <h2>Simple by design</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="icon">🖥️</span>
+          <h3>Fullscreen overlays</h3>
+          <p>Covers all your monitors with a calming break screen. No tiny popups you can ignore.</p>
+        </div>
+        <div class="feature-card">
+          <span class="icon">🎵</span>
+          <h3>Custom sounds & images</h3>
+          <p>Pick your own notification sound (MP3, OGG, WAV, FLAC) and background image.</p>
+        </div>
+        <div class="feature-card">
+          <span class="icon">💤</span>
+          <h3>Smart detection</h3>
+          <p>Auto-pauses when you're idle or Do Not Disturb is on. No interruptions during focus time.</p>
+        </div>
+        <div class="feature-card">
+          <span class="icon">🌐</span>
+          <h3>Cross-platform</h3>
+          <p>Windows, macOS, and Linux. Lightweight, runs in system tray. English & Vietnamese.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://github.com/Cat1m/breaktime">GitHub</a>
+        <a href="https://ko-fi.com/minhchienle">Ko-fi</a>
+        <a href="https://paypal.me/ArcaRyze">PayPal</a>
+      </div>
+      <p class="footer-tagline">Made with caffeine by a developer who transforms coffee into apps.</p>
+    </div>
+  </footer>
+
+  <script>
+    const BASE = 'https://github.com/Cat1m/breaktime/releases/download/v0.1.0/';
+    const DOWNLOADS = {
+      windows: { file: 'Sipping_0.1.0_x64-setup.exe', label: 'Download for Windows', os: 'Windows' },
+      mac_arm: { file: 'Sipping_0.1.0_aarch64.dmg', label: 'Download for macOS', os: 'macOS (Apple Silicon)' },
+      mac_intel: { file: 'Sipping_0.1.0_x64.dmg', label: 'Download for macOS', os: 'macOS (Intel)' },
+      linux: { file: 'Sipping_0.1.0_amd64.AppImage', label: 'Download for Linux', os: 'Linux' },
+    };
+
+    function detectOS() {
+      const ua = navigator.userAgent.toLowerCase();
+      const platform = navigator.platform?.toLowerCase() || '';
+      if (ua.includes('win')) return 'windows';
+      if (ua.includes('mac')) {
+        // Apple Silicon detection (not 100% reliable but good enough)
+        try {
+          const canvas = document.createElement('canvas');
+          const gl = canvas.getContext('webgl');
+          const renderer = gl?.getParameter(gl.UNMASKED_RENDERER_WEBGL) || '';
+          if (renderer.includes('Apple')) return 'mac_arm';
+        } catch(e) {}
+        return 'mac_intel';
+      }
+      if (ua.includes('linux')) return 'linux';
+      return 'windows'; // fallback
+    }
+
+    const os = detectOS();
+    const dl = DOWNLOADS[os];
+    const btn = document.getElementById('main-download');
+    const label = document.getElementById('os-label');
+    const text = document.getElementById('dl-text');
+
+    btn.href = BASE + dl.file;
+    text.textContent = dl.label;
+    label.textContent = 'Detected: ' + dl.os;
+
+    function toggleOther() {
+      document.getElementById('other-platforms').classList.toggle('show');
+    }
+  </script>
+</body>
+</html>
