@@ -48,5 +48,12 @@
   "overlay.longBreak": "Nghỉ Dài",
   "overlay.breathe": "hít vào... thở ra...",
   "overlay.skip": "Bỏ qua",
-  "overlay.escEmergency": "Nhấn Esc để thoát khẩn cấp"
+  "overlay.escEmergency": "Nhấn Esc để thoát khẩn cấp",
+  "section.support": "Ủng hộ",
+  "support.about": "Một lập trình viên biến cà phê thành ứng dụng và viết về những thứ mình học được trong những ngày làm việc nhàm chán.",
+  "support.thanks": "Nếu Sipping giúp bạn khỏe hơn, hãy mua cho mình một ly cà phê nhé!",
+  "support.kofi": "Ko-fi",
+  "support.paypal": "PayPal",
+  "support.qrLabel": "QR ngân hàng",
+  "support.hideQr": "Ẩn QR"
 }

@@ -222,3 +222,41 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.supportSection {
+  text-align: center;
+  padding: 16px 0 8px;
+}
+
+.aboutText {
+  font-size: 12px;
+  color: #9ca3af;
+  font-style: italic;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.thankYou {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.donateLinks {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.qrWrapper {
+  margin-top: 12px;
+}
+
+.qrImage {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}

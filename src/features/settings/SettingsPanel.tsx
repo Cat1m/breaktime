@@ -6,6 +6,8 @@ import { Toggle } from "../../shared/components/Toggle";
 import { NumberInput } from "../../shared/components/NumberInput";
 import { Button } from "../../shared/components/Button";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { open } from "@tauri-apps/plugin-shell";
+import qrImage from "../../assets/qr_donate.jpg";
 import styles from "./SettingsPanel.module.css";
 
 export function SettingsPanel() {
@@ -35,6 +37,7 @@ export function SettingsPanel() {
   const [newTextInput, setNewTextInput] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
+  const [showQr, setShowQr] = useState(false);
 
   const IMAGE_EXTENSIONS = ["png", "jpg", "jpeg", "gif", "bmp", "webp", "tiff", "raf"];
 
@@ -285,6 +288,28 @@ export function SettingsPanel() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Support */}
+      <div className={styles.supportSection}>
+        <p className={styles.aboutText}>{t("support.about")}</p>
+        <p className={styles.thankYou}>{t("support.thanks")}</p>
+        <div className={styles.donateLinks}>
+          <Button variant="primary" onClick={() => open("https://ko-fi.com/minhchienle")}>
+            {t("support.kofi")}
+          </Button>
+          <Button variant="secondary" onClick={() => open("https://paypal.me/ArcaRyze")}>
+            {t("support.paypal")}
+          </Button>
+          <Button variant="secondary" onClick={() => setShowQr(!showQr)}>
+            {showQr ? t("support.hideQr") : t("support.qrLabel")}
+          </Button>
+        </div>
+        {showQr && (
+          <div className={styles.qrWrapper}>
+            <img src={qrImage} alt="QR Donate" className={styles.qrImage} />
+          </div>
+        )}
       </div>
     </div>
   );

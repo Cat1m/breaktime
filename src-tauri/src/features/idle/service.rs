@@ -48,12 +48,18 @@ fn get_idle_seconds_windows() -> AppResult<u64> {
 
 #[cfg(target_os = "macos")]
 fn get_idle_seconds_macos() -> AppResult<u64> {
-    use core_graphics::event_source::{CGEventSource, CGEventSourceStateID};
-
-    let idle_secs = CGEventSource::seconds_since_last_event_type(
-        CGEventSourceStateID::CombinedSessionState,
-        core_graphics::event::CGEventType::Null,
-    );
+    // Use raw FFI — core-graphics 0.24 removed the safe wrapper
+    extern "C" {
+        fn CGEventSourceSecondsSinceLastEventType(
+            stateID: u32,
+            eventType: u32,
+        ) -> f64;
+    }
+    // stateID: kCGEventSourceStateCombinedSessionState = 0
+    // eventType: kCGAnyInputEventType = 0xFFFFFFFF (u32::MAX)
+    let idle_secs = unsafe {
+        CGEventSourceSecondsSinceLastEventType(0, u32::MAX)
+    };
     Ok(idle_secs as u64)
 }
 

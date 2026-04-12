@@ -48,5 +48,12 @@
   "overlay.longBreak": "Long Break",
   "overlay.breathe": "breathe in... breathe out...",
   "overlay.skip": "Skip Break",
-  "overlay.escEmergency": "Press Esc to emergency exit"
+  "overlay.escEmergency": "Press Esc to emergency exit",
+  "section.support": "Support",
+  "support.about": "A developer who transforms caffeine into apps and writes about the things I learn during my incredibly boring work days.",
+  "support.thanks": "If Sipping helps you stay healthy, consider buying me a coffee!",
+  "support.kofi": "Ko-fi",
+  "support.paypal": "PayPal",
+  "support.qrLabel": "Bank QR",
+  "support.hideQr": "Hide QR"
 }
