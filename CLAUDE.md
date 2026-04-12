@@ -44,7 +44,7 @@ A single `index.html` entry point serves both window types. `App.tsx` reads `?wi
 - `features/` — Feature modules, each with `mod.rs`, `service.rs`, `commands.rs`:
   - `timer/` — 1-second tick loop (`start_timer_loop`), break triggering, overlay window creation/destruction
   - `settings/` — JSON persistence to `dirs::config_dir()/sipping/sipping-settings.json`, `model.rs` defines `Settings` struct
-  - `audio/` — Sound playback via `rodio`
+  - `audio/` — Sound playback via `rodio` (supports OGG, WAV, FLAC, MP3). Custom sound file loading with `PreviewState` for play/stop toggle. Default sound embedded via `include_bytes!`
   - `idle/` — Platform-specific idle time detection (Windows `GetLastInputInfo`, macOS `CoreGraphics`, Linux `XScreenSaver`)
   - `dnd/` — Do Not Disturb detection (Windows Focus Assist registry, macOS `defaults read`, Linux stub)
   - `image_loader/` — Custom background image loading + base64 encoding with caching
@@ -72,3 +72,7 @@ Windows-specific dependencies are gated with `#[cfg(windows)]` / `[target.'cfg(w
 - Rust l10n for tray/tooltip is hardcoded in `core/l10n.rs`; frontend l10n uses JSON files in `src/locales/`
 - CSS Modules (`.module.css`) are used throughout the frontend — no global CSS framework
 - Tauri capabilities for window permissions are in `src-tauri/capabilities/default.json`; overlay windows use wildcard label `overlay-*`
+- Long breaks are optional (disabled by default via `long_break_enabled`); when disabled, long break timer/counter/UI are all skipped
+- Autostart uses `tauri-plugin-autostart` — synced with OS registry on settings change and on app startup
+- Custom sounds follow the same cache pattern as custom images: `cached_sound: Option<(String, Vec<u8>)>` in AppState, invalidated on settings change
+- `PreviewState` (audio preview play/stop) is managed separately from `AppState` as it uses `AtomicBool` flags accessed by blocking threads outside the Mutex
