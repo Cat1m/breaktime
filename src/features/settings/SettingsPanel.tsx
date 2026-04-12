@@ -14,6 +14,9 @@ export function SettingsPanel() {
     updateField,
     pickImageFile,
     clearImage,
+    pickSoundFile,
+    clearSound,
+    previewSound,
     loading,
     error,
     addCustomText,
@@ -31,6 +34,7 @@ export function SettingsPanel() {
   };
   const [newTextInput, setNewTextInput] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+  const [isPreviewing, setIsPreviewing] = useState(false);
 
   const IMAGE_EXTENSIONS = ["png", "jpg", "jpeg", "gif", "bmp", "webp", "tiff", "raf"];
 
@@ -111,11 +115,15 @@ export function SettingsPanel() {
               <span className={styles.countdownLabel}>{t("countdown.mini")}</span>
               <span className={styles.countdownValue}>{formatTime(secsUntilMini)}</span>
             </div>
-            <div className={styles.countdownDivider} />
-            <div className={styles.countdownItem}>
-              <span className={styles.countdownLabel}>{t("countdown.long")}</span>
-              <span className={styles.countdownValue}>{formatTime(secsUntilLong)}</span>
-            </div>
+            {settings.long_break_enabled && (
+              <>
+                <div className={styles.countdownDivider} />
+                <div className={styles.countdownItem}>
+                  <span className={styles.countdownLabel}>{t("countdown.long")}</span>
+                  <span className={styles.countdownValue}>{formatTime(secsUntilLong)}</span>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -146,11 +154,18 @@ export function SettingsPanel() {
           <NumberInput label={t("field.miniDuration")} value={settings.mini_break_duration} onChange={(v) => updateField("mini_break_duration", v)} min={5} max={300} step={5} unit={t("unit.seconds")} />
         </div>
         <div className={styles.field}>
-          <NumberInput label={t("field.longInterval")} value={Math.round(settings.long_break_interval / 60)} onChange={(v) => updateField("long_break_interval", v * 60)} min={1} max={240} step={1} unit={t("unit.minutes")} />
+          <Toggle label={t("field.longBreakEnabled")} checked={settings.long_break_enabled} onChange={(v) => updateField("long_break_enabled", v)} />
         </div>
-        <div className={styles.field}>
-          <NumberInput label={t("field.longDuration")} value={Math.round(settings.long_break_duration / 60)} onChange={(v) => updateField("long_break_duration", v * 60)} min={1} max={30} step={1} unit={t("unit.minutes")} />
-        </div>
+        {settings.long_break_enabled && (
+          <>
+            <div className={styles.field}>
+              <NumberInput label={t("field.longInterval")} value={Math.round(settings.long_break_interval / 60)} onChange={(v) => updateField("long_break_interval", v * 60)} min={1} max={240} step={1} unit={t("unit.minutes")} />
+            </div>
+            <div className={styles.field}>
+              <NumberInput label={t("field.longDuration")} value={Math.round(settings.long_break_duration / 60)} onChange={(v) => updateField("long_break_duration", v * 60)} min={1} max={30} step={1} unit={t("unit.minutes")} />
+            </div>
+          </>
+        )}
       </div>
 
       {/* Sound */}
@@ -161,6 +176,39 @@ export function SettingsPanel() {
         </div>
         <div className={styles.field}>
           <NumberInput label={t("field.volume")} value={Math.round(settings.sound_volume * 100)} onChange={(v) => updateField("sound_volume", v / 100)} min={0} max={100} step={5} unit="%" />
+        </div>
+        <div className={styles.field}>
+          <p style={{ fontSize: "12px", color: "#6b7280", marginBottom: "8px" }}>
+            {t("field.customSound")}
+          </p>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <Button variant="secondary" onClick={pickSoundFile}>
+              {t("button.chooseSound")}
+            </Button>
+            {settings.custom_sound_path && (
+              <>
+                <Button variant={isPreviewing ? "primary" : "secondary"} onClick={() => {
+                  if (isPreviewing) {
+                    previewSound();
+                    setIsPreviewing(false);
+                  } else {
+                    setIsPreviewing(true);
+                    previewSound().then(() => setIsPreviewing(false));
+                  }
+                }}>
+                  {isPreviewing ? t("button.stopSound") : t("button.previewSound")}
+                </Button>
+                <Button variant="danger" onClick={() => { if (isPreviewing) { previewSound(); setIsPreviewing(false); } clearSound(); }}>
+                  {t("button.clearSound")}
+                </Button>
+              </>
+            )}
+          </div>
+          {settings.custom_sound_path && (
+            <p className={styles.imagePath} style={{ marginTop: "6px" }}>
+              {settings.custom_sound_path.split(/[/\\]/).pop()}
+            </p>
+          )}
         </div>
       </div>
 

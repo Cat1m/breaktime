@@ -30,9 +30,15 @@ pub struct Settings {
     pub idle_pause: bool,           // default: true
     pub idle_threshold_secs: u64,   // default: 120
 
+    // Long break toggle
+    #[serde(default)]
+    pub long_break_enabled: bool, // default: false
+
     // Custom content
     pub custom_texts: Vec<String>,         // default: vec of exercise suggestions
     pub custom_image_path: Option<String>, // default: None
+    #[serde(default)]
+    pub custom_sound_path: Option<String>, // default: None
 
     // Startup
     pub start_on_boot: bool, // default: false
@@ -55,6 +61,7 @@ impl Default for Settings {
             dnd_pause: true,
             idle_pause: true,
             idle_threshold_secs: 120,
+            long_break_enabled: false,
             custom_texts: vec![
                 "Have a sip! Stay hydrated.".to_string(),
                 "Grab your water bottle and take a few sips.".to_string(),
@@ -63,6 +70,7 @@ impl Default for Settings {
                 "Sip, stretch, and breathe. You deserve this break.".to_string(),
             ],
             custom_image_path: None,
+            custom_sound_path: None,
             start_on_boot: false,
             language: Language::default(),
         }

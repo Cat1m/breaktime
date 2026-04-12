@@ -13,10 +13,11 @@ tauri = { version = "2", features = ["tray-icon"] }
 tauri-plugin-shell = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-single-instance = "2"
+tauri-plugin-autostart = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["full"] }
-rodio = "0.19"
+rodio = { version = "0.19", features = ["minimp3"] }
 image = "0.25"
 dirs = "6"
 base64 = "0.22"

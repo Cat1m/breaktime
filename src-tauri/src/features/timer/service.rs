@@ -51,11 +51,18 @@ pub async fn start_timer_loop(app: AppHandle, state: AppState) {
 
         // 4. Tang elapsed counters
         s.elapsed_since_last_mini += 1;
-        s.elapsed_since_last_long += 1;
+        let long_enabled = s.settings.long_break_enabled;
+        if long_enabled {
+            s.elapsed_since_last_long += 1;
+        }
 
         // 4b. Emit timer:tick event + update tray tooltip
         let secs_until_mini = s.settings.mini_break_interval.saturating_sub(s.elapsed_since_last_mini);
-        let secs_until_long = s.settings.long_break_interval.saturating_sub(s.elapsed_since_last_long);
+        let secs_until_long = if long_enabled {
+            s.settings.long_break_interval.saturating_sub(s.elapsed_since_last_long)
+        } else {
+            0
+        };
         let tick_payload = TimerTickPayload {
             status: "running".into(),
             secs_until_mini,
@@ -67,19 +74,27 @@ pub async fn start_timer_loop(app: AppHandle, state: AppState) {
 
         // Update tray tooltip
         let lang = &s.settings.language;
-        let tooltip = format!(
-            "Sipping — {}: {} | {}: {}",
-            crate::core::l10n::t(lang, "tooltip.mini"),
-            format_duration(secs_until_mini),
-            crate::core::l10n::t(lang, "tooltip.long"),
-            format_duration(secs_until_long),
-        );
+        let tooltip = if long_enabled {
+            format!(
+                "Sipping — {}: {} | {}: {}",
+                crate::core::l10n::t(lang, "tooltip.mini"),
+                format_duration(secs_until_mini),
+                crate::core::l10n::t(lang, "tooltip.long"),
+                format_duration(secs_until_long),
+            )
+        } else {
+            format!(
+                "Sipping — {}: {}",
+                crate::core::l10n::t(lang, "tooltip.mini"),
+                format_duration(secs_until_mini),
+            )
+        };
         if let Some(tray) = app.tray_by_id("default") {
             tray.set_tooltip(Some(&tooltip)).ok();
         }
 
         // 5. Kiem tra long break truoc (uu tien cao hon)
-        if s.elapsed_since_last_long >= s.settings.long_break_interval {
+        if long_enabled && s.elapsed_since_last_long >= s.settings.long_break_interval {
             let app_clone = app.clone();
             let state_clone = state.clone();
             drop(s);
@@ -99,7 +114,7 @@ pub async fn start_timer_loop(app: AppHandle, state: AppState) {
 
 async fn trigger_break_standalone(app: &AppHandle, state: &AppState, break_type: BreakType) {
     // 1. Lock state, build payload, store in state, then release lock
-    let (play_sound, volume) = {
+    let (play_sound, volume, custom_sound) = {
         let mut s = state.lock().await;
         s.timer_status = TimerStatus::OnBreak;
         s.current_break_type = Some(break_type.clone());
@@ -128,7 +143,8 @@ async fn trigger_break_standalone(app: &AppHandle, state: &AppState, break_type:
 
         let play_sound = s.settings.sound_enabled;
         let volume = s.settings.sound_volume;
-        (play_sound, volume)
+        let custom_sound = s.get_sound_bytes();
+        (play_sound, volume, custom_sound)
     }; // lock released
 
     // 2. Create overlay windows (one per monitor)
@@ -148,7 +164,7 @@ async fn trigger_break_standalone(app: &AppHandle, state: &AppState, break_type:
     // 5. Play sound
     if play_sound {
         tokio::task::spawn_blocking(move || {
-            crate::features::audio::service::play_sound_blocking(volume).ok();
+            crate::features::audio::service::play_sound_blocking(volume, custom_sound.as_deref()).ok();
         });
     }
 }

@@ -1,7 +1,7 @@
-use tauri::{Emitter, State, Manager};
 use crate::core::error::AppError;
-use crate::core::events::{BreakStartPayload, TIMER_STATUS_CHANGED, TimerStatusPayload};
+use crate::core::events::{BreakStartPayload, TimerStatusPayload, TIMER_STATUS_CHANGED};
 use crate::core::state::{AppState, TimerStatus};
+use tauri::{Emitter, Manager, State};
 
 #[tauri::command]
 pub async fn pause_timer(
@@ -13,7 +13,13 @@ pub async fn pause_timer(
     let lang = s.settings.language.clone();
     drop(s);
     // Notify frontend
-    app.emit(TIMER_STATUS_CHANGED, TimerStatusPayload { status: "paused".into() }).ok();
+    app.emit(
+        TIMER_STATUS_CHANGED,
+        TimerStatusPayload {
+            status: "paused".into(),
+        },
+    )
+    .ok();
     // Update tray menu text
     update_tray_pause_label(&app, &lang, true);
     Ok(())
@@ -28,16 +34,19 @@ pub async fn resume_timer(
     s.timer_status = TimerStatus::Running;
     let lang = s.settings.language.clone();
     drop(s);
-    app.emit(TIMER_STATUS_CHANGED, TimerStatusPayload { status: "running".into() }).ok();
+    app.emit(
+        TIMER_STATUS_CHANGED,
+        TimerStatusPayload {
+            status: "running".into(),
+        },
+    )
+    .ok();
     update_tray_pause_label(&app, &lang, false);
     Ok(())
 }
 
 #[tauri::command]
-pub async fn skip_break(
-    state: State<'_, AppState>,
-    app: tauri::AppHandle,
-) -> Result<(), AppError> {
+pub async fn skip_break(state: State<'_, AppState>, app: tauri::AppHandle) -> Result<(), AppError> {
     super::service::end_break(&app, &state).await;
     Ok(())
 }
@@ -54,7 +63,9 @@ pub async fn get_timer_status(state: State<'_, AppState>) -> Result<String, AppE
 }
 
 #[tauri::command]
-pub async fn get_active_break(state: State<'_, AppState>) -> Result<Option<BreakStartPayload>, AppError> {
+pub async fn get_active_break(
+    state: State<'_, AppState>,
+) -> Result<Option<BreakStartPayload>, AppError> {
     let s = state.lock().await;
     Ok(s.current_break_payload.clone())
 }
@@ -75,15 +86,33 @@ pub fn update_tray_pause_label(
     };
 
     // Rebuild menu with updated pause label
-    let Ok(skip) = MenuItemBuilder::with_id("skip", t(lang, "tray.skip")).build(app) else { return };
-    let Ok(pause) = MenuItemBuilder::with_id("pause", pause_label).build(app) else { return };
-    let Ok(settings) = MenuItemBuilder::with_id("settings", t(lang, "tray.settings")).build(app) else { return };
-    let Ok(sep) = PredefinedMenuItem::separator(app) else { return };
-    let Ok(quit) = MenuItemBuilder::with_id("quit", t(lang, "tray.quit")).build(app) else { return };
+    let Ok(skip) = MenuItemBuilder::with_id("skip", t(lang, "tray.skip")).build(app) else {
+        return;
+    };
+    let Ok(pause) = MenuItemBuilder::with_id("pause", pause_label).build(app) else {
+        return;
+    };
+    let Ok(settings) = MenuItemBuilder::with_id("settings", t(lang, "tray.settings")).build(app)
+    else {
+        return;
+    };
+    let Ok(sep) = PredefinedMenuItem::separator(app) else {
+        return;
+    };
+    let Ok(quit) = MenuItemBuilder::with_id("quit", t(lang, "tray.quit")).build(app) else {
+        return;
+    };
 
     let Ok(menu) = MenuBuilder::new(app)
-        .item(&skip).item(&pause).item(&settings).item(&sep).item(&quit)
-        .build() else { return };
+        .item(&skip)
+        .item(&pause)
+        .item(&settings)
+        .item(&sep)
+        .item(&quit)
+        .build()
+    else {
+        return;
+    };
 
     if let Some(tray) = app.tray_by_id("default") {
         tray.set_menu(Some(menu)).ok();

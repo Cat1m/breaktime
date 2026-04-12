@@ -4,6 +4,7 @@ export interface Settings {
   mini_break_duration: number;
   long_break_interval: number;
   long_break_duration: number;
+  long_break_enabled: boolean;
   sound_enabled: boolean;
   sound_volume: number;
   strict_mode: boolean;
@@ -12,6 +13,7 @@ export interface Settings {
   idle_threshold_secs: number;
   custom_texts: string[];
   custom_image_path: string | null;
+  custom_sound_path: string | null;
   start_on_boot: boolean;
   language: "en" | "vi";
 }

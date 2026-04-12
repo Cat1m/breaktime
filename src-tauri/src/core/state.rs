@@ -31,6 +31,8 @@ pub struct AppStateInner {
     pub current_break_payload: Option<BreakStartPayload>,
     // Cached image: (path, base64_data)
     pub cached_image: Option<(String, String)>,
+    // Cached sound: (path, bytes)
+    pub cached_sound: Option<(String, Vec<u8>)>,
 }
 
 impl AppStateInner {
@@ -45,6 +47,7 @@ impl AppStateInner {
             current_break_type: None,
             current_break_payload: None,
             cached_image: None,
+            cached_sound: None,
         }
     }
 
@@ -78,6 +81,35 @@ impl AppStateInner {
     /// Invalidate cache (call when user changes image)
     pub fn invalidate_image_cache(&mut self) {
         self.cached_image = None;
+    }
+
+    /// Get cached custom sound bytes, or load + cache if path changed.
+    /// Returns None when no custom sound is set (= use default embedded sound).
+    pub fn get_sound_bytes(&mut self) -> Option<Vec<u8>> {
+        match &self.settings.custom_sound_path {
+            Some(path) => {
+                if let Some((cached_path, cached_data)) = &self.cached_sound {
+                    if cached_path == path {
+                        return Some(cached_data.clone());
+                    }
+                }
+                match crate::features::audio::service::load_sound_from_file(path) {
+                    Ok(data) => {
+                        self.cached_sound = Some((path.clone(), data.clone()));
+                        Some(data)
+                    }
+                    Err(e) => {
+                        log::error!("Failed to load custom sound: {}", e);
+                        None // fallback to default
+                    }
+                }
+            }
+            None => None,
+        }
+    }
+
+    pub fn invalidate_sound_cache(&mut self) {
+        self.cached_sound = None;
     }
 
     pub fn reset_mini_timer(&mut self) {

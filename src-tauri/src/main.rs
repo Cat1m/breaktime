@@ -4,6 +4,7 @@ mod core;
 mod features;
 
 use tauri::{Listener, Manager};
+use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 use crate::core::state::create_app_state;
 use crate::core::l10n::t;
 use crate::features::settings::service::load_settings;
@@ -17,6 +18,7 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_autostart::init(MacosLauncher::LaunchAgent, None))
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             if let Some(window) = app.get_webview_window("settings") {
                 window.show().ok();
@@ -24,11 +26,13 @@ fn main() {
             }
         }))
         .manage(app_state.clone())
+        .manage(std::sync::Arc::new(features::audio::service::PreviewState::new()))
         .invoke_handler(tauri::generate_handler![
             features::settings::commands::get_settings,
             features::settings::commands::save_settings,
             features::audio::commands::play_sound,
             features::audio::commands::set_volume,
+            features::audio::commands::preview_sound,
             features::timer::commands::pause_timer,
             features::timer::commands::resume_timer,
             features::timer::commands::skip_break,
@@ -40,6 +44,17 @@ fn main() {
         ])
         .setup(move |app| {
             println!("[Sipping] App setup starting...");
+
+            // Sync autostart state with settings
+            {
+                let s = app_state.blocking_lock();
+                let autostart = app.handle().autolaunch();
+                if s.settings.start_on_boot {
+                    let _ = autostart.enable();
+                } else {
+                    let _ = autostart.disable();
+                }
+            }
 
             let initial_lang = {
                 let s = app_state.blocking_lock();

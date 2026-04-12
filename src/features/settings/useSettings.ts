@@ -44,6 +44,46 @@ export function useSettings() {
     updateField("custom_image_path", null);
   };
 
+  const pickSoundFile = async () => {
+    if (!settings) return;
+    try {
+      const { open } = await import("@tauri-apps/plugin-dialog");
+      const selected = await open({
+        multiple: false,
+        filters: [
+          {
+            name: "Audio",
+            extensions: ["ogg", "wav", "flac", "mp3"],
+          },
+        ],
+      });
+      if (selected) {
+        const path = Array.isArray(selected) ? selected[0] : selected;
+        if (path) {
+          updateField("custom_sound_path", path);
+        }
+      }
+    } catch (e) {
+      console.warn("Dialog not available:", e);
+    }
+  };
+
+  const clearSound = () => {
+    if (!settings) return;
+    updateField("custom_sound_path", null);
+  };
+
+  const previewSound = async (): Promise<boolean> => {
+    if (!settings?.custom_sound_path) return false;
+    try {
+      const { invoke } = await import("@tauri-apps/api/core");
+      return await invoke<boolean>("preview_sound", { path: settings.custom_sound_path });
+    } catch (e) {
+      console.warn("Preview sound failed:", e);
+      return false;
+    }
+  };
+
   const addCustomText = (text: string) => {
     if (!settings) return;
     updateField("custom_texts", [...settings.custom_texts, text]);
@@ -66,6 +106,9 @@ export function useSettings() {
     updateField,
     pickImageFile,
     clearImage,
+    pickSoundFile,
+    clearSound,
+    previewSound,
     loading,
     error,
     addCustomText,
