@@ -41,16 +41,7 @@ export function BreakOverlay() {
   }
 
   const isStrictMode = settings?.strict_mode ?? false;
-  const isAttendance = breakState.breakType === "attendance";
   const hasImage = !!breakState.imageBase64;
-
-  const breakTypeLabel = breakState.breakType === "mini"
-    ? t("overlay.miniBreak")
-    : breakState.breakType === "long"
-    ? t("overlay.longBreak")
-    : breakState.breakType === "attendance"
-    ? t("overlay.attendance")
-    : "";
 
   return (
     <div className={styles.overlay} style={cssVars as React.CSSProperties}>
@@ -62,7 +53,7 @@ export function BreakOverlay() {
       <div className={styles.ui}>
         {breakState.breakType && (
           <span className={styles.breakType}>
-            {breakTypeLabel}
+            {breakState.breakType === "mini" ? t("overlay.miniBreak") : t("overlay.longBreak")}
           </span>
         )}
 
@@ -80,7 +71,7 @@ export function BreakOverlay() {
           )}
         </div>
 
-        {(!isStrictMode || isAttendance) ? (
+        {!isStrictMode ? (
           <button className={styles.skipButton} onClick={skipBreak}>
             {t("overlay.skip")}
           </button>

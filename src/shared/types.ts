@@ -14,13 +14,11 @@ export interface Settings {
   custom_image_path: string | null;
   start_on_boot: boolean;
   language: "en" | "vi";
-  attendance_reminder_enabled: boolean;
-  attendance_times: string[];
 }
 
 // Break event payloads
 export interface BreakStartPayload {
-  break_type: "mini" | "long" | "attendance";
+  break_type: "mini" | "long";
   duration_secs: number;
   message: string;
   image_base64: string | null;

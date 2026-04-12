@@ -40,21 +40,6 @@ pub struct Settings {
     // Language
     #[serde(default)]
     pub language: Language, // default: En
-
-    // Attendance reminder (nhắc chấm công)
-    #[serde(default)]
-    pub attendance_reminder_enabled: bool, // default: false
-    #[serde(default = "default_attendance_times")]
-    pub attendance_times: Vec<String>, // default: ["06:55", "11:05", "12:55", "17:05"]
-}
-
-fn default_attendance_times() -> Vec<String> {
-    vec![
-        "06:55".to_string(),
-        "11:05".to_string(),
-        "12:55".to_string(),
-        "17:05".to_string(),
-    ]
 }
 
 impl Default for Settings {
@@ -80,8 +65,6 @@ impl Default for Settings {
             custom_image_path: None,
             start_on_boot: false,
             language: Language::default(),
-            attendance_reminder_enabled: false,
-            attendance_times: default_attendance_times(),
         }
     }
 }

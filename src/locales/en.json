@@ -42,10 +42,5 @@
   "overlay.longBreak": "Long Break",
   "overlay.breathe": "breathe in... breathe out...",
   "overlay.skip": "Skip Break",
-  "overlay.escEmergency": "Press Esc to emergency exit",
-  "overlay.attendance": "Attendance Reminder",
-  "section.attendance": "Attendance Reminder",
-  "field.attendanceEnabled": "Enable attendance reminder",
-  "field.attendanceTimes": "Check-in times",
-  "attendance.addPlaceholder": "HH:MM (e.g. 09:00)"
+  "overlay.escEmergency": "Press Esc to emergency exit"
 }

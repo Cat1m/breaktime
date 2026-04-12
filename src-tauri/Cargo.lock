@@ -4464,7 +4464,6 @@ name = "sipping"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
- "chrono",
  "core-graphics 0.24.0",
  "dirs",
  "env_logger",

@@ -61,19 +61,6 @@ export function useSettings() {
     updateField("custom_texts", newTexts);
   };
 
-  const addAttendanceTime = (time: string) => {
-    if (!settings) return;
-    if (settings.attendance_times.includes(time)) return;
-    const newTimes = [...settings.attendance_times, time].sort();
-    updateField("attendance_times", newTimes);
-  };
-
-  const removeAttendanceTime = (index: number) => {
-    if (!settings) return;
-    const newTimes = settings.attendance_times.filter((_, i) => i !== index);
-    updateField("attendance_times", newTimes);
-  };
-
   return {
     settings,
     updateField,
@@ -84,7 +71,5 @@ export function useSettings() {
     addCustomText,
     removeCustomText,
     updateCustomText,
-    addAttendanceTime,
-    removeAttendanceTime,
   };
 }

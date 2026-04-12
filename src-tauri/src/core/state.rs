@@ -15,7 +15,6 @@ pub enum TimerStatus {
 pub enum BreakType {
     Mini,
     Long,
-    Attendance,
 }
 
 // Inner state (wrapped trong Mutex)
@@ -32,9 +31,6 @@ pub struct AppStateInner {
     pub current_break_payload: Option<BreakStartPayload>,
     // Cached image: (path, base64_data)
     pub cached_image: Option<(String, String)>,
-    // Attendance reminder tracking
-    pub attendance_reminded_today: Vec<String>,    // times already reminded today (e.g., ["06:55"])
-    pub attendance_reminded_date: Option<String>,  // YYYY-MM-DD to detect day rollover
 }
 
 impl AppStateInner {
@@ -49,8 +45,6 @@ impl AppStateInner {
             current_break_type: None,
             current_break_payload: None,
             cached_image: None,
-            attendance_reminded_today: Vec::new(),
-            attendance_reminded_date: None,
         }
     }
 

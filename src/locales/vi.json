@@ -42,10 +42,5 @@
   "overlay.longBreak": "Nghỉ Dài",
   "overlay.breathe": "hít vào... thở ra...",
   "overlay.skip": "Bỏ qua",
-  "overlay.escEmergency": "Nhấn Esc để thoát khẩn cấp",
-  "overlay.attendance": "Nhắc Chấm Công",
-  "section.attendance": "Nhắc Chấm Công",
-  "field.attendanceEnabled": "Bật nhắc chấm công",
-  "field.attendanceTimes": "Giờ chấm công",
-  "attendance.addPlaceholder": "HH:MM (vd: 09:00)"
+  "overlay.escEmergency": "Nhấn Esc để thoát khẩn cấp"
 }

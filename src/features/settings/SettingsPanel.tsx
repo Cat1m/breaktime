@@ -19,8 +19,6 @@ export function SettingsPanel() {
     addCustomText,
     removeCustomText,
     updateCustomText,
-    addAttendanceTime,
-    removeAttendanceTime,
   } = useSettings();
 
   const { timerStatus, secsUntilMini, secsUntilLong, pauseTimer, resumeTimer } = useTimerContext();
@@ -32,7 +30,6 @@ export function SettingsPanel() {
     return m > 0 ? `${m}m ${String(s).padStart(2, "0")}s` : `${s}s`;
   };
   const [newTextInput, setNewTextInput] = useState("");
-  const [newTimeInput, setNewTimeInput] = useState("");
   const [isDragging, setIsDragging] = useState(false);
 
   const IMAGE_EXTENSIONS = ["png", "jpg", "jpeg", "gif", "bmp", "webp", "tiff", "raf"];
@@ -81,14 +78,6 @@ export function SettingsPanel() {
     if (trimmed) {
       addCustomText(trimmed);
       setNewTextInput("");
-    }
-  };
-
-  const handleAddTime = () => {
-    const trimmed = newTimeInput.trim();
-    if (/^([01]\d|2[0-3]):[0-5]\d$/.test(trimmed)) {
-      addAttendanceTime(trimmed);
-      setNewTimeInput("");
     }
   };
 
@@ -193,37 +182,6 @@ export function SettingsPanel() {
         <div className={styles.field}>
           <Toggle label={t("field.startOnBoot")} checked={settings.start_on_boot} onChange={(v) => updateField("start_on_boot", v)} />
         </div>
-      </div>
-
-      {/* Attendance Reminder */}
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>{t("section.attendance")}</h2>
-        <div className={styles.field}>
-          <Toggle label={t("field.attendanceEnabled")} checked={settings.attendance_reminder_enabled} onChange={(v) => updateField("attendance_reminder_enabled", v)} />
-        </div>
-        {settings.attendance_reminder_enabled && (
-          <div className={styles.field}>
-            <p style={{ fontSize: "12px", color: "#6b7280", marginBottom: "8px" }}>
-              {t("field.attendanceTimes")}
-            </p>
-            <div className={styles.textList}>
-              {settings.attendance_times.map((time, i) => (
-                <div key={i} className={styles.textItem}>
-                  <input className={styles.textInput} type="text" value={time} readOnly style={{ flex: "0 0 80px" }} />
-                  <Button variant="danger" onClick={() => removeAttendanceTime(i)}>
-                    {t("button.remove")}
-                  </Button>
-                </div>
-              ))}
-            </div>
-            <div className={styles.textItem} style={{ marginTop: "8px" }}>
-              <input className={styles.textInput} type="text" placeholder={t("attendance.addPlaceholder")} value={newTimeInput} onChange={(e) => setNewTimeInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleAddTime(); }} style={{ flex: "0 0 80px" }} />
-              <Button variant="primary" onClick={handleAddTime}>
-                {t("button.add")}
-              </Button>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Custom Content */}

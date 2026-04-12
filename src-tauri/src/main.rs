@@ -73,14 +73,6 @@ fn main() {
                 features::timer::service::start_timer_loop(app_handle2, state2).await;
             });
 
-            // Attendance reminder startup check (2s delay to let UI load)
-            let app_handle3 = app.handle().clone();
-            let state3 = app_state.clone();
-            tauri::async_runtime::spawn(async move {
-                tokio::time::sleep(std::time::Duration::from_secs(2)).await;
-                features::timer::service::check_attendance_on_startup(&app_handle3, &state3).await;
-            });
-
             Ok(())
         })
         .on_window_event(|window, event| {
