@@ -13,77 +13,257 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #0f1117;
-      --surface: #1a1d27;
-      --border: #2a2d3a;
-      --text: #e4e4e7;
-      --text-muted: #9ca3af;
-      --primary: #6366f1;
-      --primary-hover: #818cf8;
+      --bg-deep: #020b1a;
+      --bg-ocean: #041e42;
+      --glass: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-hover: rgba(255, 255, 255, 0.1);
+      --text: #e8f0fe;
+      --text-muted: #8eafc8;
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.35);
+      --accent: #06d6a0;
+      --water-light: #67e8f9;
+      --water-mid: #22d3ee;
+      --water-deep: #0891b2;
     }
 
     body {
       font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-      background: var(--bg);
+      background: var(--bg-deep);
       color: var(--text);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      position: relative;
     }
 
-    a { color: var(--primary-hover); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    /* ── Animated water background ── */
+    .water-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background: linear-gradient(170deg, #020b1a 0%, #041e42 30%, #0c3155 60%, #0a2a4a 100%);
+    }
 
+    .water-bg::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 60%, rgba(6, 214, 160, 0.06) 0%, transparent 50%),
+                  radial-gradient(ellipse at 50% 80%, rgba(34, 211, 238, 0.05) 0%, transparent 40%);
+      animation: drift 20s ease-in-out infinite;
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(2%, -1%) rotate(1deg); }
+      66% { transform: translate(-1%, 1%) rotate(-0.5deg); }
+    }
+
+    /* Floating bubbles */
+    .bubbles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: -80px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(103, 232, 249, 0.25), rgba(56, 189, 248, 0.08));
+      border: 1px solid rgba(103, 232, 249, 0.12);
+      animation: rise linear infinite;
+    }
+
+    @keyframes rise {
+      0% { transform: translateY(0) scale(1); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 0.6; }
+      100% { transform: translateY(-110vh) scale(0.5); opacity: 0; }
+    }
+
+    /* Wave at the bottom */
+    .wave-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 0;
+      pointer-events: none;
+      height: 200px;
+    }
+
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: -5%;
+      width: 110%;
+      height: 100%;
+    }
+
+    .wave path { fill: rgba(56, 189, 248, 0.04); }
+    .wave:nth-child(2) path { fill: rgba(34, 211, 238, 0.03); }
+    .wave:nth-child(3) path { fill: rgba(6, 214, 160, 0.02); }
+
+    .wave { animation: wave-sway 8s ease-in-out infinite; }
+    .wave:nth-child(2) { animation: wave-sway 10s ease-in-out infinite reverse; }
+    .wave:nth-child(3) { animation: wave-sway 12s ease-in-out infinite; }
+
+    @keyframes wave-sway {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(-3%); }
+    }
+
+    /* ── Layout ── */
+    .content { position: relative; z-index: 1; }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
     .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
 
-    /* Lang toggle */
+    /* ── Glass card mixin ── */
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+    }
+
+    /* ── Lang toggle ── */
     .lang-toggle {
       position: fixed;
       top: 16px;
       right: 16px;
       z-index: 100;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 6px 12px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 8px 14px;
       color: var(--text-muted);
       font-size: 13px;
       cursor: pointer;
       font-family: inherit;
-      transition: all 0.2s;
+      transition: all 0.3s;
     }
-    .lang-toggle:hover { border-color: var(--text-muted); color: var(--text); }
+    .lang-toggle:hover {
+      border-color: var(--primary);
+      color: var(--text);
+      background: rgba(56, 189, 248, 0.1);
+    }
 
-    /* Hero */
-    .hero { text-align: center; padding: 80px 0 60px; }
-    .hero-icon { font-size: 64px; margin-bottom: 16px; display: block; }
-    .hero h1 { font-size: 48px; font-weight: 700; letter-spacing: -1px; margin-bottom: 8px; }
-    .hero .tagline { font-size: 20px; color: var(--text-muted); margin-bottom: 24px; }
-    .hero .description { font-size: 16px; color: var(--text-muted); max-width: 520px; margin: 0 auto 36px; }
+    /* ── Hero ── */
+    .hero { text-align: center; padding: 100px 0 70px; }
+    .hero-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      display: block;
+      filter: drop-shadow(0 0 30px rgba(56, 189, 248, 0.4));
+      animation: float 4s ease-in-out infinite;
+    }
 
-    /* Buttons */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .hero h1 {
+      font-size: 56px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #e8f0fe 0%, #67e8f9 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero .tagline {
+      font-size: 22px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 300;
+    }
+
+    .hero .description {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 540px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    /* ── Buttons ── */
     .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 14px 32px; border-radius: 10px; font-size: 16px;
-      font-weight: 600; border: none; cursor: pointer;
-      transition: all 0.2s; text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
     }
-    .btn-primary { background: var(--primary); color: white; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--water-deep));
+      color: white;
+      box-shadow: 0 4px 20px var(--primary-glow);
+    }
     .btn-primary:hover {
-      background: var(--primary-hover); text-decoration: none;
-      transform: translateY(-1px); box-shadow: 0 4px 24px rgba(99, 102, 241, 0.3);
+      text-decoration: none;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px var(--primary-glow);
     }
-    .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); padding: 10px 20px; font-size: 14px; }
-    .btn-ghost:hover { border-color: var(--text-muted); color: var(--text); text-decoration: none; }
-    .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: 8px; }
+
+    .btn-ghost {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: var(--text-muted);
+      border: 1px solid var(--glass-border);
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+    .btn-ghost:hover {
+      border-color: var(--primary);
+      color: var(--text);
+      text-decoration: none;
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: 10px; }
 
     .download-group { margin-bottom: 16px; }
     .os-label { font-size: 13px; color: var(--text-muted); margin-top: 12px; }
 
     .trust-note {
-      margin-top: 20px; padding: 14px 20px;
-      background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.2);
-      border-radius: 10px; font-size: 13px; color: #d4a017;
-      line-height: 1.6; max-width: 480px; margin-left: auto; margin-right: auto; text-align: left;
+      margin-top: 24px;
+      padding: 16px 22px;
+      background: rgba(234, 179, 8, 0.06);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(234, 179, 8, 0.15);
+      border-radius: 14px;
+      font-size: 13px;
+      color: #d4a017;
+      line-height: 1.6;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
     }
     .trust-note summary { cursor: pointer; font-weight: 600; text-align: center; list-style: none; }
     .trust-note summary::-webkit-details-marker { display: none; }
@@ -91,161 +271,395 @@
     .trust-note .steps strong { color: var(--text); }
 
     .other-toggle {
-      color: var(--text-muted); font-size: 14px; cursor: pointer;
-      background: none; border: none; margin-top: 12px; font-family: inherit;
+      color: var(--text-muted);
+      font-size: 14px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      margin-top: 14px;
+      font-family: inherit;
+      transition: color 0.3s;
     }
-    .other-toggle:hover { color: var(--text); }
+    .other-toggle:hover { color: var(--primary); }
 
     .other-platforms { display: none; margin-top: 20px; gap: 8px; flex-wrap: wrap; justify-content: center; }
     .other-platforms.show { display: flex; }
 
-    /* Screenshots */
-    .screenshots { padding: 60px 0; border-top: 1px solid var(--border); }
-    .screenshots h2 { text-align: center; font-size: 28px; margin-bottom: 32px; }
+    /* ── Section divider ── */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+      margin: 0 auto;
+      max-width: 600px;
+    }
+
+    /* ── Screenshots ── */
+    .screenshots { padding: 70px 0; }
+    .screenshots h2 {
+      text-align: center;
+      font-size: 30px;
+      margin-bottom: 36px;
+      font-weight: 700;
+    }
     .screenshots-grid {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
     }
     .screenshots-grid img {
-      width: 100%; border-radius: 10px; border: 1px solid var(--border);
-      cursor: pointer; transition: transform 0.2s;
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      transition: all 0.3s;
+      background: var(--glass);
     }
-    .screenshots-grid img:hover { transform: scale(1.02); }
+    .screenshots-grid img:hover {
+      transform: scale(1.02);
+      border-color: var(--primary);
+      box-shadow: 0 8px 32px rgba(56, 189, 248, 0.15);
+    }
 
-    /* Lightbox */
+    /* ── Lightbox ── */
     .lightbox {
-      display: none; position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,0.85); align-items: center; justify-content: center;
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(2, 11, 26, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
     }
     .lightbox.show { display: flex; }
-    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 12px; }
 
-    /* Features */
-    .features { padding: 60px 0; border-top: 1px solid var(--border); }
-    .features h2 { text-align: center; font-size: 28px; margin-bottom: 40px; }
-    .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-    .feature-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 24px;
+    /* ── Hydration section ── */
+    .hydration { padding: 70px 0; }
+    .hydration h2 {
+      text-align: center;
+      font-size: 30px;
+      margin-bottom: 12px;
+      font-weight: 700;
     }
-    .feature-card .icon { font-size: 28px; margin-bottom: 12px; display: block; }
-    .feature-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-    .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+    .hydration .section-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 560px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
 
-    /* Footer */
-    footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; }
-    .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
-    .footer-links a { color: var(--text-muted); font-size: 14px; }
-    .footer-links a:hover { color: var(--text); }
+    .hydration-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .hydration-card {
+      padding: 28px 22px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .hydration-card:hover {
+      background: var(--glass-hover);
+      border-color: rgba(56, 189, 248, 0.2);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(56, 189, 248, 0.08);
+    }
+
+    .hydration-card .card-icon {
+      font-size: 36px;
+      display: block;
+      margin-bottom: 14px;
+      filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.3));
+    }
+    .hydration-card h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--water-light);
+    }
+    .hydration-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .water-fact {
+      margin-top: 36px;
+      padding: 24px 28px;
+      text-align: center;
+      background: rgba(56, 189, 248, 0.04);
+      border: 1px solid rgba(56, 189, 248, 0.12);
+    }
+    .water-fact p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .water-fact strong { color: var(--water-light); }
+
+    /* ── Features ── */
+    .features { padding: 70px 0; }
+    .features h2 {
+      text-align: center;
+      font-size: 30px;
+      margin-bottom: 40px;
+      font-weight: 700;
+    }
+    .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+    .feature-card {
+      padding: 26px;
+      transition: all 0.3s;
+    }
+    .feature-card:hover {
+      background: var(--glass-hover);
+      border-color: rgba(56, 189, 248, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(56, 189, 248, 0.08);
+    }
+    .feature-card .icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+      display: block;
+      filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.2));
+    }
+    .feature-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── Footer ── */
+    footer { padding: 50px 0 40px; text-align: center; }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--primary); }
     .footer-tagline { font-size: 13px; color: var(--text-muted); font-style: italic; }
 
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .hydration-grid { grid-template-columns: 1fr; }
+    }
+
     @media (max-width: 640px) {
-      .hero { padding: 48px 0 40px; }
-      .hero h1 { font-size: 32px; }
-      .hero .tagline { font-size: 17px; }
-      .features-grid, .screenshots-grid { grid-template-columns: 1fr; }
+      .hero { padding: 60px 0 50px; }
+      .hero h1 { font-size: 36px; }
+      .hero-icon { font-size: 56px; }
+      .hero .tagline { font-size: 18px; }
+      .features-grid,
+      .screenshots-grid { grid-template-columns: 1fr; }
+      .hydration-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <button class="lang-toggle" id="lang-toggle" onclick="toggleLang()">🇻🇳 Tiếng Việt</button>
+  <!-- Animated water background -->
+  <div class="water-bg"></div>
 
-  <!-- Hero -->
-  <section class="hero">
-    <div class="container">
-      <span class="hero-icon">💧</span>
-      <h1>Sipping</h1>
-      <p class="tagline" data-i18n="tagline"></p>
-      <p class="description" data-i18n="description"></p>
+  <!-- Floating bubbles (generated by JS) -->
+  <div class="bubbles" id="bubbles"></div>
 
-      <div class="download-group">
-        <a id="main-download" class="btn btn-primary" href="#">
-          <span>⬇</span>
-          <span id="dl-text"></span>
-        </a>
-        <p class="os-label" id="os-label"></p>
-      </div>
-
-      <button class="other-toggle" onclick="toggleOther()" data-i18n="allPlatforms"></button>
-
-      <div class="other-platforms" id="other-platforms">
-        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64-setup.exe">Windows (.exe)</a>
-        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64_en-US.msi">Windows (.msi)</a>
-        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_aarch64.dmg">macOS (Apple Silicon)</a>
-        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64.dmg">macOS (Intel)</a>
-        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_amd64.AppImage">Linux (.AppImage)</a>
-        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_amd64.deb">Linux (.deb)</a>
-        <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping-0.1.0-1.x86_64.rpm">Linux (.rpm)</a>
-      </div>
-
-      <details class="trust-note">
-        <summary data-i18n="trustTitle"></summary>
-        <div class="steps" id="trust-steps"></div>
-      </details>
-    </div>
-  </section>
-
-  <!-- Screenshots -->
-  <section class="screenshots">
-    <div class="container">
-      <h2 data-i18n="screenshotsTitle"></h2>
-      <div class="screenshots-grid">
-        <img src="images/screenshot_1.jpg" alt="Sipping Settings" onclick="openLightbox(this.src)" loading="lazy">
-        <img src="images/screenshot_2.jpg" alt="Sipping Break Overlay" onclick="openLightbox(this.src)" loading="lazy">
-        <img src="images/screenshot_3.png" alt="Sipping Timer" onclick="openLightbox(this.src)" loading="lazy">
-        <img src="images/screenshot_4.png" alt="Sipping Custom Sound" onclick="openLightbox(this.src)" loading="lazy">
-      </div>
-    </div>
-  </section>
-
-  <!-- Lightbox -->
-  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-    <img id="lightbox-img" src="" alt="">
+  <!-- Waves -->
+  <div class="wave-container">
+    <svg class="wave" viewBox="0 0 1440 200" preserveAspectRatio="none">
+      <path d="M0,120 C360,180 720,60 1080,120 C1260,150 1380,100 1440,120 L1440,200 L0,200 Z"/>
+    </svg>
+    <svg class="wave" viewBox="0 0 1440 200" preserveAspectRatio="none">
+      <path d="M0,140 C240,80 480,180 720,120 C960,60 1200,160 1440,100 L1440,200 L0,200 Z"/>
+    </svg>
+    <svg class="wave" viewBox="0 0 1440 200" preserveAspectRatio="none">
+      <path d="M0,160 C180,120 540,180 900,140 C1080,120 1320,170 1440,150 L1440,200 L0,200 Z"/>
+    </svg>
   </div>
 
-  <!-- Features -->
-  <section class="features">
-    <div class="container">
-      <h2 data-i18n="featuresTitle"></h2>
-      <div class="features-grid">
-        <div class="feature-card">
-          <span class="icon">🖥️</span>
-          <h3 data-i18n="f1Title"></h3>
-          <p data-i18n="f1Desc"></p>
-        </div>
-        <div class="feature-card">
-          <span class="icon">🎵</span>
-          <h3 data-i18n="f2Title"></h3>
-          <p data-i18n="f2Desc"></p>
-        </div>
-        <div class="feature-card">
-          <span class="icon">💤</span>
-          <h3 data-i18n="f3Title"></h3>
-          <p data-i18n="f3Desc"></p>
-        </div>
-        <div class="feature-card">
-          <span class="icon">🌐</span>
-          <h3 data-i18n="f4Title"></h3>
-          <p data-i18n="f4Desc"></p>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- Page content -->
+  <div class="content">
 
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <div class="footer-links">
-        <a href="https://github.com/Cat1m/breaktime">GitHub</a>
-        <a href="https://ko-fi.com/minhchienle">Ko-fi</a>
-        <a href="https://paypal.me/ArcaRyze">PayPal</a>
+    <button class="lang-toggle" id="lang-toggle" onclick="toggleLang()"></button>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <span class="hero-icon">💧</span>
+        <h1>Sipping</h1>
+        <p class="tagline" data-i18n="tagline"></p>
+        <p class="description" data-i18n="description"></p>
+
+        <div class="download-group">
+          <a id="main-download" class="btn btn-primary" href="#">
+            <span>⬇</span>
+            <span id="dl-text"></span>
+          </a>
+          <p class="os-label" id="os-label"></p>
+        </div>
+
+        <button class="other-toggle" onclick="toggleOther()" data-i18n="allPlatforms"></button>
+
+        <div class="other-platforms" id="other-platforms">
+          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64-setup.exe">Windows (.exe)</a>
+          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64_en-US.msi">Windows (.msi)</a>
+          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_aarch64.dmg">macOS (Apple Silicon)</a>
+          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64.dmg">macOS (Intel)</a>
+          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_amd64.AppImage">Linux (.AppImage)</a>
+          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_amd64.deb">Linux (.deb)</a>
+          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping-0.1.0-1.x86_64.rpm">Linux (.rpm)</a>
+        </div>
+
+        <details class="trust-note">
+          <summary data-i18n="trustTitle"></summary>
+          <div class="steps" id="trust-steps"></div>
+        </details>
       </div>
-      <p class="footer-tagline" data-i18n="footerTagline"></p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Screenshots -->
+    <section class="screenshots">
+      <div class="container">
+        <h2 data-i18n="screenshotsTitle"></h2>
+        <div class="screenshots-grid">
+          <img src="images/screenshot_1.jpg" alt="Sipping Settings" onclick="openLightbox(this.src)" loading="lazy">
+          <img src="images/screenshot_2.jpg" alt="Sipping Break Overlay" onclick="openLightbox(this.src)" loading="lazy">
+          <img src="images/screenshot_3.png" alt="Sipping Timer" onclick="openLightbox(this.src)" loading="lazy">
+          <img src="images/screenshot_4.png" alt="Sipping Custom Sound" onclick="openLightbox(this.src)" loading="lazy">
+        </div>
+      </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+      <img id="lightbox-img" src="" alt="">
     </div>
-  </footer>
+
+    <div class="section-divider"></div>
+
+    <!-- Why Water Matters -->
+    <section class="hydration">
+      <div class="container">
+        <h2 data-i18n="hydrationTitle"></h2>
+        <p class="section-subtitle" data-i18n="hydrationSubtitle"></p>
+
+        <div class="hydration-grid">
+          <div class="hydration-card glass">
+            <span class="card-icon">🧠</span>
+            <h3 data-i18n="h1Title"></h3>
+            <p data-i18n="h1Desc"></p>
+          </div>
+          <div class="hydration-card glass">
+            <span class="card-icon">⚡</span>
+            <h3 data-i18n="h2Title"></h3>
+            <p data-i18n="h2Desc"></p>
+          </div>
+          <div class="hydration-card glass">
+            <span class="card-icon">💪</span>
+            <h3 data-i18n="h3Title"></h3>
+            <p data-i18n="h3Desc"></p>
+          </div>
+          <div class="hydration-card glass">
+            <span class="card-icon">🫀</span>
+            <h3 data-i18n="h4Title"></h3>
+            <p data-i18n="h4Desc"></p>
+          </div>
+          <div class="hydration-card glass">
+            <span class="card-icon">✨</span>
+            <h3 data-i18n="h5Title"></h3>
+            <p data-i18n="h5Desc"></p>
+          </div>
+          <div class="hydration-card glass">
+            <span class="card-icon">🛡️</span>
+            <h3 data-i18n="h6Title"></h3>
+            <p data-i18n="h6Desc"></p>
+          </div>
+        </div>
+
+        <div class="water-fact glass">
+          <p data-i18n="waterFact"></p>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Features -->
+    <section class="features">
+      <div class="container">
+        <h2 data-i18n="featuresTitle"></h2>
+        <div class="features-grid">
+          <div class="feature-card glass">
+            <span class="icon">🖥️</span>
+            <h3 data-i18n="f1Title"></h3>
+            <p data-i18n="f1Desc"></p>
+          </div>
+          <div class="feature-card glass">
+            <span class="icon">🎵</span>
+            <h3 data-i18n="f2Title"></h3>
+            <p data-i18n="f2Desc"></p>
+          </div>
+          <div class="feature-card glass">
+            <span class="icon">💤</span>
+            <h3 data-i18n="f3Title"></h3>
+            <p data-i18n="f3Desc"></p>
+          </div>
+          <div class="feature-card glass">
+            <span class="icon">🌐</span>
+            <h3 data-i18n="f4Title"></h3>
+            <p data-i18n="f4Desc"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-links">
+          <a href="https://github.com/Cat1m/breaktime">GitHub</a>
+          <a href="https://ko-fi.com/minhchienle">Ko-fi</a>
+          <a href="https://paypal.me/ArcaRyze">PayPal</a>
+        </div>
+        <p class="footer-tagline" data-i18n="footerTagline"></p>
+      </div>
+    </footer>
+
+  </div>
 
   <script>
+    // ── Bubble generator ──
+    (function generateBubbles() {
+      const container = document.getElementById('bubbles');
+      const count = 18;
+      for (let i = 0; i < count; i++) {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        const size = Math.random() * 40 + 10;
+        bubble.style.width = size + 'px';
+        bubble.style.height = size + 'px';
+        bubble.style.left = Math.random() * 100 + '%';
+        bubble.style.animationDuration = Math.random() * 12 + 10 + 's';
+        bubble.style.animationDelay = Math.random() * 15 + 's';
+        container.appendChild(bubble);
+      }
+    })();
+
     // ── i18n ──
     const STRINGS = {
       en: {
@@ -255,6 +669,21 @@
         trustTitle: '\u26A0 Windows or macOS showing a warning?',
         trustSteps: 'Sipping is open-source and free, but not yet code-signed \u2014 so your OS may show a security warning. This is normal for new indie apps.<br><br><strong>Windows:</strong> Click "More info" \u2192 "Run anyway"<br><strong>macOS:</strong> Right-click the app \u2192 "Open" \u2192 "Open" again<br><br>You can <a href="https://github.com/Cat1m/breaktime">inspect the source code</a> anytime.',
         screenshotsTitle: 'See it in action',
+        hydrationTitle: 'Why water matters',
+        hydrationSubtitle: 'Your body is about 60% water. Every system in your body depends on it. Here\'s what staying hydrated actually does for you.',
+        h1Title: 'Sharper focus',
+        h1Desc: 'Even mild dehydration (1\u20132%) impairs concentration, working memory, and mood. A glass of water can restore your mental clarity faster than coffee.',
+        h2Title: 'Sustained energy',
+        h2Desc: 'Fatigue is one of the first signs of dehydration. Water helps transport nutrients and oxygen to your cells, keeping your energy levels stable throughout the day.',
+        h3Title: 'Joint & muscle health',
+        h3Desc: 'Water lubricates your joints and helps prevent muscle cramps. Especially important when you sit at a desk for hours \u2014 your body stiffens without it.',
+        h4Title: 'Heart & circulation',
+        h4Desc: 'Proper hydration keeps blood volume up and your heart doesn\'t have to work as hard. Dehydration thickens blood and raises strain on your cardiovascular system.',
+        h5Title: 'Clear skin & detox',
+        h5Desc: 'Water flushes toxins through your kidneys and keeps skin cells plump and elastic. Chronic dehydration accelerates aging and dulls your complexion.',
+        h6Title: 'Immune support',
+        h6Desc: 'Hydrated mucous membranes are your first defense against viruses. Water also supports lymph production, which carries immune cells throughout your body.',
+        waterFact: '<strong>Did you know?</strong> Losing just 2% of your body weight in water reduces cognitive performance by up to 25%. That\'s only about 1 liter for most adults. A regular sip habit \u2014 not a big chug session \u2014 is the most effective way to stay hydrated.',
         featuresTitle: 'Simple by design',
         f1Title: 'Fullscreen overlays',
         f1Desc: 'Covers all your monitors with a calming break screen. No tiny popups you can ignore.',
@@ -275,6 +704,21 @@
         trustTitle: '\u26A0 Windows ho\u1EB7c macOS hi\u1EC7n c\u1EA3nh b\u00E1o?',
         trustSteps: 'Sipping l\u00E0 m\u00E3 ngu\u1ED3n m\u1EDF v\u00E0 mi\u1EC5n ph\u00ED, nh\u01B0ng ch\u01B0a c\u00F3 ch\u1EEF k\u00FD s\u1ED1 \u2014 n\u00EAn h\u1EC7 \u0111i\u1EC1u h\u00E0nh c\u00F3 th\u1EC3 hi\u1EC7n c\u1EA3nh b\u00E1o. \u0110i\u1EC1u n\u00E0y b\u00ECnh th\u01B0\u1EDDng v\u1EDBi app m\u1EDBi.<br><br><strong>Windows:</strong> Nh\u1EA5n "More info" \u2192 "Run anyway"<br><strong>macOS:</strong> Chu\u1ED9t ph\u1EA3i v\u00E0o app \u2192 "Open" \u2192 "Open" l\u1EA7n n\u1EEFa<br><br>B\u1EA1n c\u00F3 th\u1EC3 <a href="https://github.com/Cat1m/breaktime">xem m\u00E3 ngu\u1ED3n</a> b\u1EA5t c\u1EE9 l\u00FAc n\u00E0o.',
         screenshotsTitle: 'Xem th\u1EED nh\u00E9',
+        hydrationTitle: 'T\u1EA1i sao n\u01B0\u1EDBc quan tr\u1ECDng',
+        hydrationSubtitle: 'C\u01A1 th\u1EC3 b\u1EA1n ch\u1EE9a kho\u1EA3ng 60% l\u00E0 n\u01B0\u1EDBc. M\u1ECDi h\u1EC7 th\u1ED1ng trong c\u01A1 th\u1EC3 \u0111\u1EC1u ph\u1EE5 thu\u1ED9c v\u00E0o n\u00F3. \u0110\u00E2y l\u00E0 nh\u1EEFng g\u00EC vi\u1EC7c u\u1ED1ng \u0111\u1EE7 n\u01B0\u1EDBc mang l\u1EA1i cho b\u1EA1n.',
+        h1Title: 'T\u1EADp trung s\u1EAFc b\u00E9n h\u01A1n',
+        h1Desc: 'Ch\u1EC9 m\u1EA5t n\u01B0\u1EDBc nh\u1EB9 (1\u20132%) \u0111\u00E3 l\u00E0m gi\u1EA3m kh\u1EA3 n\u0103ng t\u1EADp trung, tr\u00ED nh\u1EDB v\u00E0 t\u00E2m tr\u1EA1ng. M\u1ED9t ly n\u01B0\u1EDBc c\u00F3 th\u1EC3 ph\u1EE5c h\u1ED3i s\u1EF1 minh m\u1EABn nhanh h\u01A1n c\u00E0 ph\u00EA.',
+        h2Title: 'N\u0103ng l\u01B0\u1EE3ng b\u1EC1n b\u1EC9',
+        h2Desc: 'M\u1EC7t m\u1ECFi l\u00E0 d\u1EA5u hi\u1EC7u \u0111\u1EA7u ti\u00EAn c\u1EE7a m\u1EA5t n\u01B0\u1EDBc. N\u01B0\u1EDBc gi\u00FAp v\u1EADn chuy\u1EC3n dinh d\u01B0\u1EE1ng v\u00E0 oxy \u0111\u1EBFn t\u1EBF b\u00E0o, gi\u1EEF n\u0103ng l\u01B0\u1EE3ng \u1ED5n \u0111\u1ECBnh su\u1ED1t c\u1EA3 ng\u00E0y.',
+        h3Title: 'Kh\u1EDBp & c\u01A1',
+        h3Desc: 'N\u01B0\u1EDBc b\u00F4i tr\u01A1n kh\u1EDBp v\u00E0 ng\u0103n chu\u1ED9t c\u01A1. \u0110\u1EB7c bi\u1EC7t quan tr\u1ECDng khi b\u1EA1n ng\u1ED3i l\u00E0m vi\u1EC7c h\u00E0ng gi\u1EDD \u2014 c\u01A1 th\u1EC3 s\u1EBD c\u1EE9ng khi thi\u1EBFu n\u01B0\u1EDBc.',
+        h4Title: 'Tim & tu\u1EA7n ho\u00E0n',
+        h4Desc: '\u0110\u1EE7 n\u01B0\u1EDBc gi\u00FAp duy tr\u00EC th\u1EC3 t\u00EDch m\u00E1u, gi\u1EA3m g\u00E1nh n\u1EB7ng cho tim. M\u1EA5t n\u01B0\u1EDBc l\u00E0m m\u00E1u \u0111\u1EB7c v\u00E0 t\u0103ng \u00E1p l\u1EF1c l\u00EAn h\u1EC7 tim m\u1EA1ch.',
+        h5Title: 'Da s\u00E1ng & th\u1EA3i \u0111\u1ED9c',
+        h5Desc: 'N\u01B0\u1EDBc lo\u1EA1i b\u1ECF \u0111\u1ED9c t\u1ED1 qua th\u1EADn v\u00E0 gi\u1EEF t\u1EBF b\u00E0o da c\u0103ng m\u1ECDng. Thi\u1EBFu n\u01B0\u1EDBc m\u00E3n t\u00EDnh l\u00E0m da ch\u00F3ng l\u00E3o h\u00F3a v\u00E0 x\u1EC9n m\u00E0u.',
+        h6Title: 'H\u1ED7 tr\u1EE3 mi\u1EC5n d\u1ECBch',
+        h6Desc: 'Ni\u00EAm m\u1EA1c \u0111\u1EE7 \u1EA9m l\u00E0 h\u00E0ng r\u00E0o \u0111\u1EA7u ti\u00EAn ch\u1ED1ng virus. N\u01B0\u1EDBc c\u0169ng h\u1ED7 tr\u1EE3 s\u1EA3n xu\u1EA5t b\u1EA1ch huy\u1EBFt, v\u1EADn chuy\u1EC3n t\u1EBF b\u00E0o mi\u1EC5n d\u1ECBch kh\u1EAFp c\u01A1 th\u1EC3.',
+        waterFact: '<strong>B\u1EA1n c\u00F3 bi\u1EBFt?</strong> Ch\u1EC9 m\u1EA5t 2% tr\u1ECDng l\u01B0\u1EE3ng c\u01A1 th\u1EC3 do m\u1EA5t n\u01B0\u1EDBc c\u00F3 th\u1EC3 gi\u1EA3m hi\u1EC7u su\u1EA5t nh\u1EADn th\u1EE9c t\u1EDBi 25%. \u0110\u00F3 ch\u1EC9 kho\u1EA3ng 1 l\u00EDt v\u1EDBi ng\u01B0\u1EDDi l\u1EDBn. Th\u00F3i quen nh\u1EA5p t\u1EEBng ng\u1EE5m \u0111\u1EC1u \u0111\u1EB7n \u2014 kh\u00F4ng ph\u1EA3i u\u1ED1ng nhi\u1EC1u m\u1ED9t l\u00FAc \u2014 l\u00E0 c\u00E1ch hi\u1EC7u qu\u1EA3 nh\u1EA5t \u0111\u1EC3 gi\u1EEF n\u01B0\u1EDBc.',
         featuresTitle: '\u0110\u01A1n gi\u1EA3n l\u00E0 ti\u00EAu ch\u00ED',
         f1Title: 'M\u00E0n h\u00ECnh ngh\u1EC9 to\u00E0n m\u00E0n h\u00ECnh',
         f1Desc: 'Ph\u1EE7 k\u00EDn m\u1ECDi m\u00E0n h\u00ECnh v\u1EDBi giao di\u1EC7n ngh\u1EC9 ng\u01A1i d\u1EC5 ch\u1ECBu. Kh\u00F4ng ph\u1EA3i popup nh\u1ECF x\u00EDu d\u1EC5 b\u1ECF qua.',
@@ -298,8 +742,9 @@
         const key = el.dataset.i18n;
         if (s[key]) el.textContent = s[key];
       });
-      // HTML content (trust steps)
+      // HTML content
       document.getElementById('trust-steps').innerHTML = s.trustSteps;
+      document.querySelector('.water-fact p').innerHTML = s.waterFact;
       // Lang toggle button
       document.getElementById('lang-toggle').textContent = s.langBtn;
       // Download button + OS label
