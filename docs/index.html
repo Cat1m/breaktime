@@ -14,17 +14,13 @@
 
     :root {
       --bg-deep: #e6f4fb;
-      --bg-ocean: #cce8f7;
-      --glass: rgba(255, 255, 255, 0.45);
-      --glass-border: rgba(255, 255, 255, 0.6);
-      --glass-hover: rgba(255, 255, 255, 0.6);
-      --text: #1a3a4a;
-      --text-muted: #4a7a8f;
+      --text: #0c2d3f;
+      --text-secondary: #1a4a5e;
+      --text-muted: #3a6a80;
       --primary: #0ea5e9;
+      --primary-dark: #0369a1;
       --primary-glow: rgba(14, 165, 233, 0.3);
-      --accent: #06d6a0;
       --water-light: #0284c7;
-      --water-mid: #0891b2;
       --water-deep: #0369a1;
     }
 
@@ -35,7 +31,6 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
-      position: relative;
     }
 
     /* ── Animated water background ── */
@@ -79,15 +74,15 @@
       position: absolute;
       bottom: -80px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, rgba(14, 165, 233, 0.2), rgba(56, 189, 248, 0.06));
-      border: 1px solid rgba(14, 165, 233, 0.15);
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.6), rgba(14, 165, 233, 0.15));
+      border: 1px solid rgba(255, 255, 255, 0.5);
       animation: rise linear infinite;
     }
 
     @keyframes rise {
       0% { transform: translateY(0) scale(1); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 0.6; }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.4; }
       100% { transform: translateY(-110vh) scale(0.5); opacity: 0; }
     }
 
@@ -110,9 +105,9 @@
       height: 100%;
     }
 
-    .wave path { fill: rgba(14, 165, 233, 0.1); }
-    .wave:nth-child(2) path { fill: rgba(56, 189, 248, 0.08); }
-    .wave:nth-child(3) path { fill: rgba(6, 182, 212, 0.06); }
+    .wave path { fill: rgba(14, 165, 233, 0.08); }
+    .wave:nth-child(2) path { fill: rgba(56, 189, 248, 0.06); }
+    .wave:nth-child(3) path { fill: rgba(6, 182, 212, 0.05); }
 
     .wave { animation: wave-sway 8s ease-in-out infinite; }
     .wave:nth-child(2) { animation: wave-sway 10s ease-in-out infinite reverse; }
@@ -125,17 +120,49 @@
 
     /* ── Layout ── */
     .content { position: relative; z-index: 1; }
-    a { color: var(--primary); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    a { color: var(--primary-dark); text-decoration: none; font-weight: 500; }
+    a:hover { text-decoration: underline; color: var(--primary); }
     .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
 
-    /* ── Glass card mixin ── */
-    .glass {
-      background: var(--glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
+    /* ── Liquid glass panel ── */
+    .liquid-glass {
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(24px) saturate(1.4);
+      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 24px;
+      box-shadow:
+        0 8px 32px rgba(14, 165, 233, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Liquid shimmer on the top edge */
+    .liquid-glass::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+    }
+
+    /* ── Inner glass card (for grids) ── */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
       border-radius: 16px;
+      transition: all 0.3s;
+    }
+    .glass-card:hover {
+      background: rgba(255, 255, 255, 0.6);
+      border-color: rgba(14, 165, 233, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(14, 165, 233, 0.12);
     }
 
     /* ── Lang toggle ── */
@@ -144,10 +171,10 @@
       top: 16px;
       right: 16px;
       z-index: 100;
-      background: rgba(255,255,255,0.5);
+      background: rgba(255, 255, 255, 0.6);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.7);
+      border: 1px solid rgba(255, 255, 255, 0.7);
       border-radius: 10px;
       padding: 8px 14px;
       color: var(--text-muted);
@@ -159,16 +186,19 @@
     .lang-toggle:hover {
       border-color: var(--primary);
       color: var(--text);
-      background: rgba(255,255,255,0.7);
+      background: rgba(255, 255, 255, 0.8);
     }
 
     /* ── Hero ── */
     .hero { text-align: center; padding: 100px 0 70px; }
+
+    .hero .liquid-glass { padding: 48px 40px 44px; }
+
     .hero-icon {
       font-size: 80px;
       margin-bottom: 20px;
       display: block;
-      filter: drop-shadow(0 0 30px rgba(14, 165, 233, 0.35));
+      filter: drop-shadow(0 0 24px rgba(14, 165, 233, 0.3));
       animation: float 4s ease-in-out infinite;
     }
 
@@ -190,16 +220,16 @@
 
     .hero .tagline {
       font-size: 22px;
-      color: var(--text-muted);
+      color: var(--text-secondary);
       margin-bottom: 12px;
-      font-weight: 300;
+      font-weight: 400;
     }
 
     .hero .description {
       font-size: 16px;
       color: var(--text-muted);
       max-width: 540px;
-      margin: 0 auto 40px;
+      margin: 0 auto 36px;
       line-height: 1.7;
     }
 
@@ -230,11 +260,11 @@
     }
 
     .btn-ghost {
-      background: rgba(255,255,255,0.45);
+      background: rgba(255, 255, 255, 0.5);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       color: var(--text-muted);
-      border: 1px solid rgba(255,255,255,0.6);
+      border: 1px solid rgba(255, 255, 255, 0.7);
       padding: 10px 20px;
       font-size: 14px;
     }
@@ -242,7 +272,7 @@
       border-color: var(--primary);
       color: var(--text);
       text-decoration: none;
-      background: rgba(255,255,255,0.65);
+      background: rgba(255, 255, 255, 0.7);
     }
     .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: 10px; }
 
@@ -252,13 +282,11 @@
     .trust-note {
       margin-top: 24px;
       padding: 16px 22px;
-      background: rgba(234, 179, 8, 0.1);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(234, 179, 8, 0.25);
+      background: rgba(234, 179, 8, 0.12);
+      border: 1px solid rgba(202, 156, 12, 0.3);
       border-radius: 14px;
       font-size: 13px;
-      color: #92710a;
+      color: #7a5d08;
       line-height: 1.6;
       max-width: 500px;
       margin-left: auto;
@@ -267,8 +295,8 @@
     }
     .trust-note summary { cursor: pointer; font-weight: 600; text-align: center; list-style: none; }
     .trust-note summary::-webkit-details-marker { display: none; }
-    .trust-note .steps { margin-top: 10px; color: #6b5a1e; }
-    .trust-note .steps strong { color: #4a3d10; }
+    .trust-note .steps { margin-top: 10px; color: #5a4a1a; }
+    .trust-note .steps strong { color: #3a3010; }
 
     .other-toggle {
       color: var(--text-muted);
@@ -285,21 +313,15 @@
     .other-platforms { display: none; margin-top: 20px; gap: 8px; flex-wrap: wrap; justify-content: center; }
     .other-platforms.show { display: flex; }
 
-    /* ── Section divider ── */
-    .section-divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.2), transparent);
-      margin: 0 auto;
-      max-width: 600px;
-    }
-
     /* ── Screenshots ── */
     .screenshots { padding: 70px 0; }
+    .screenshots .liquid-glass { padding: 36px 32px; }
     .screenshots h2 {
       text-align: center;
-      font-size: 30px;
-      margin-bottom: 36px;
+      font-size: 28px;
+      margin-bottom: 28px;
       font-weight: 700;
+      color: var(--text);
     }
     .screenshots-grid {
       display: grid;
@@ -308,16 +330,15 @@
     }
     .screenshots-grid img {
       width: 100%;
-      border-radius: 14px;
-      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
       cursor: pointer;
       transition: all 0.3s;
-      background: var(--glass);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     }
     .screenshots-grid img:hover {
       transform: scale(1.02);
-      border-color: var(--primary);
-      box-shadow: 0 8px 32px rgba(14, 165, 233, 0.2);
+      box-shadow: 0 8px 28px rgba(14, 165, 233, 0.18);
     }
 
     /* ── Lightbox ── */
@@ -338,44 +359,39 @@
 
     /* ── Hydration section ── */
     .hydration { padding: 70px 0; }
+    .hydration .liquid-glass { padding: 40px 32px; }
     .hydration h2 {
       text-align: center;
-      font-size: 30px;
-      margin-bottom: 12px;
+      font-size: 28px;
+      margin-bottom: 10px;
       font-weight: 700;
+      color: var(--text);
     }
     .hydration .section-subtitle {
       text-align: center;
       color: var(--text-muted);
-      font-size: 16px;
-      max-width: 560px;
-      margin: 0 auto 40px;
+      font-size: 15px;
+      max-width: 540px;
+      margin: 0 auto 32px;
       line-height: 1.7;
     }
 
     .hydration-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
+      gap: 14px;
     }
 
     .hydration-card {
-      padding: 28px 22px;
+      padding: 24px 20px;
       text-align: center;
-      transition: all 0.3s;
-    }
-    .hydration-card:hover {
-      background: rgba(255,255,255,0.65);
-      border-color: rgba(14, 165, 233, 0.3);
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(14, 165, 233, 0.12);
     }
 
     .hydration-card .card-icon {
-      font-size: 36px;
+      font-size: 34px;
       display: block;
-      margin-bottom: 14px;
-      filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.25));
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 8px rgba(14, 165, 233, 0.2));
     }
     .hydration-card h3 {
       font-size: 15px;
@@ -390,57 +406,54 @@
     }
 
     .water-fact {
-      margin-top: 36px;
-      padding: 24px 28px;
+      margin-top: 28px;
+      padding: 22px 26px;
       text-align: center;
-      background: rgba(14, 165, 233, 0.08);
-      border: 1px solid rgba(14, 165, 233, 0.18);
+      background: rgba(14, 165, 233, 0.07);
+      border: 1px solid rgba(14, 165, 233, 0.15);
+      border-radius: 14px;
     }
     .water-fact p {
-      font-size: 15px;
+      font-size: 14px;
       color: var(--text-muted);
       line-height: 1.7;
-      max-width: 640px;
+      max-width: 600px;
       margin: 0 auto;
     }
-    .water-fact strong { color: var(--water-light); }
+    .water-fact strong { color: var(--primary-dark); }
 
     /* ── Features ── */
     .features { padding: 70px 0; }
+    .features .liquid-glass { padding: 36px 32px; }
     .features h2 {
       text-align: center;
-      font-size: 30px;
-      margin-bottom: 40px;
+      font-size: 28px;
+      margin-bottom: 32px;
       font-weight: 700;
+      color: var(--text);
     }
-    .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
 
-    .feature-card {
-      padding: 26px;
-      transition: all 0.3s;
-    }
-    .feature-card:hover {
-      background: rgba(255,255,255,0.65);
-      border-color: rgba(14, 165, 233, 0.3);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(14, 165, 233, 0.12);
-    }
+    .feature-card { padding: 24px; }
     .feature-card .icon {
       font-size: 28px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       display: block;
-      filter: drop-shadow(0 0 8px rgba(14, 165, 233, 0.2));
+      filter: drop-shadow(0 0 6px rgba(14, 165, 233, 0.15));
     }
-    .feature-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .feature-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
     .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
 
     /* ── Footer ── */
     footer { padding: 50px 0 40px; text-align: center; }
+    .footer-inner {
+      padding: 32px 28px;
+    }
     .footer-links {
       display: flex;
       gap: 24px;
       justify-content: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       flex-wrap: wrap;
     }
     .footer-links a {
@@ -448,12 +461,13 @@
       font-size: 14px;
       transition: color 0.3s;
     }
-    .footer-links a:hover { color: var(--primary); }
+    .footer-links a:hover { color: var(--primary); text-decoration: none; }
     .footer-tagline { font-size: 13px; color: var(--text-muted); font-style: italic; }
 
     /* ── Responsive ── */
     @media (max-width: 768px) {
       .hydration-grid { grid-template-columns: 1fr; }
+      .liquid-glass { border-radius: 18px; }
     }
 
     @media (max-width: 640px) {
@@ -461,9 +475,14 @@
       .hero h1 { font-size: 36px; }
       .hero-icon { font-size: 56px; }
       .hero .tagline { font-size: 18px; }
+      .hero .liquid-glass { padding: 32px 20px; }
       .features-grid,
       .screenshots-grid { grid-template-columns: 1fr; }
       .hydration-grid { grid-template-columns: 1fr; }
+      .screenshots .liquid-glass,
+      .hydration .liquid-glass,
+      .features .liquid-glass { padding: 28px 18px; }
+      .footer-inner { padding: 24px 18px; }
     }
   </style>
 </head>
@@ -496,49 +515,51 @@
     <!-- Hero -->
     <section class="hero">
       <div class="container">
-        <span class="hero-icon">💧</span>
-        <h1>Sipping</h1>
-        <p class="tagline" data-i18n="tagline"></p>
-        <p class="description" data-i18n="description"></p>
+        <div class="liquid-glass">
+          <span class="hero-icon">💧</span>
+          <h1>Sipping</h1>
+          <p class="tagline" data-i18n="tagline"></p>
+          <p class="description" data-i18n="description"></p>
 
-        <div class="download-group">
-          <a id="main-download" class="btn btn-primary" href="#">
-            <span>⬇</span>
-            <span id="dl-text"></span>
-          </a>
-          <p class="os-label" id="os-label"></p>
+          <div class="download-group">
+            <a id="main-download" class="btn btn-primary" href="#">
+              <span>⬇</span>
+              <span id="dl-text"></span>
+            </a>
+            <p class="os-label" id="os-label"></p>
+          </div>
+
+          <button class="other-toggle" onclick="toggleOther()" data-i18n="allPlatforms"></button>
+
+          <div class="other-platforms" id="other-platforms">
+            <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64-setup.exe">Windows (.exe)</a>
+            <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64_en-US.msi">Windows (.msi)</a>
+            <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_aarch64.dmg">macOS (Apple Silicon)</a>
+            <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64.dmg">macOS (Intel)</a>
+            <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_amd64.AppImage">Linux (.AppImage)</a>
+            <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_amd64.deb">Linux (.deb)</a>
+            <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping-0.1.0-1.x86_64.rpm">Linux (.rpm)</a>
+          </div>
+
+          <details class="trust-note">
+            <summary data-i18n="trustTitle"></summary>
+            <div class="steps" id="trust-steps"></div>
+          </details>
         </div>
-
-        <button class="other-toggle" onclick="toggleOther()" data-i18n="allPlatforms"></button>
-
-        <div class="other-platforms" id="other-platforms">
-          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64-setup.exe">Windows (.exe)</a>
-          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64_en-US.msi">Windows (.msi)</a>
-          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_aarch64.dmg">macOS (Apple Silicon)</a>
-          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_x64.dmg">macOS (Intel)</a>
-          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_amd64.AppImage">Linux (.AppImage)</a>
-          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping_0.1.0_amd64.deb">Linux (.deb)</a>
-          <a class="btn btn-ghost btn-sm" href="https://github.com/Cat1m/breaktime/releases/download/v0.1.0/Sipping-0.1.0-1.x86_64.rpm">Linux (.rpm)</a>
-        </div>
-
-        <details class="trust-note">
-          <summary data-i18n="trustTitle"></summary>
-          <div class="steps" id="trust-steps"></div>
-        </details>
       </div>
     </section>
-
-    <div class="section-divider"></div>
 
     <!-- Screenshots -->
     <section class="screenshots">
       <div class="container">
-        <h2 data-i18n="screenshotsTitle"></h2>
-        <div class="screenshots-grid">
-          <img src="images/screenshot_1.jpg" alt="Sipping Settings" onclick="openLightbox(this.src)" loading="lazy">
-          <img src="images/screenshot_2.jpg" alt="Sipping Break Overlay" onclick="openLightbox(this.src)" loading="lazy">
-          <img src="images/screenshot_3.png" alt="Sipping Timer" onclick="openLightbox(this.src)" loading="lazy">
-          <img src="images/screenshot_4.png" alt="Sipping Custom Sound" onclick="openLightbox(this.src)" loading="lazy">
+        <div class="liquid-glass">
+          <h2 data-i18n="screenshotsTitle"></h2>
+          <div class="screenshots-grid">
+            <img src="images/screenshot_1.jpg" alt="Sipping Settings" onclick="openLightbox(this.src)" loading="lazy">
+            <img src="images/screenshot_2.jpg" alt="Sipping Break Overlay" onclick="openLightbox(this.src)" loading="lazy">
+            <img src="images/screenshot_3.png" alt="Sipping Timer" onclick="openLightbox(this.src)" loading="lazy">
+            <img src="images/screenshot_4.png" alt="Sipping Custom Sound" onclick="openLightbox(this.src)" loading="lazy">
+          </div>
         </div>
       </div>
     </section>
@@ -548,95 +569,95 @@
       <img id="lightbox-img" src="" alt="">
     </div>
 
-    <div class="section-divider"></div>
-
     <!-- Why Water Matters -->
     <section class="hydration">
       <div class="container">
-        <h2 data-i18n="hydrationTitle"></h2>
-        <p class="section-subtitle" data-i18n="hydrationSubtitle"></p>
+        <div class="liquid-glass">
+          <h2 data-i18n="hydrationTitle"></h2>
+          <p class="section-subtitle" data-i18n="hydrationSubtitle"></p>
 
-        <div class="hydration-grid">
-          <div class="hydration-card glass">
-            <span class="card-icon">🧠</span>
-            <h3 data-i18n="h1Title"></h3>
-            <p data-i18n="h1Desc"></p>
+          <div class="hydration-grid">
+            <div class="hydration-card glass-card">
+              <span class="card-icon">🧠</span>
+              <h3 data-i18n="h1Title"></h3>
+              <p data-i18n="h1Desc"></p>
+            </div>
+            <div class="hydration-card glass-card">
+              <span class="card-icon">⚡</span>
+              <h3 data-i18n="h2Title"></h3>
+              <p data-i18n="h2Desc"></p>
+            </div>
+            <div class="hydration-card glass-card">
+              <span class="card-icon">💪</span>
+              <h3 data-i18n="h3Title"></h3>
+              <p data-i18n="h3Desc"></p>
+            </div>
+            <div class="hydration-card glass-card">
+              <span class="card-icon">🫀</span>
+              <h3 data-i18n="h4Title"></h3>
+              <p data-i18n="h4Desc"></p>
+            </div>
+            <div class="hydration-card glass-card">
+              <span class="card-icon">✨</span>
+              <h3 data-i18n="h5Title"></h3>
+              <p data-i18n="h5Desc"></p>
+            </div>
+            <div class="hydration-card glass-card">
+              <span class="card-icon">🛡️</span>
+              <h3 data-i18n="h6Title"></h3>
+              <p data-i18n="h6Desc"></p>
+            </div>
           </div>
-          <div class="hydration-card glass">
-            <span class="card-icon">⚡</span>
-            <h3 data-i18n="h2Title"></h3>
-            <p data-i18n="h2Desc"></p>
-          </div>
-          <div class="hydration-card glass">
-            <span class="card-icon">💪</span>
-            <h3 data-i18n="h3Title"></h3>
-            <p data-i18n="h3Desc"></p>
-          </div>
-          <div class="hydration-card glass">
-            <span class="card-icon">🫀</span>
-            <h3 data-i18n="h4Title"></h3>
-            <p data-i18n="h4Desc"></p>
-          </div>
-          <div class="hydration-card glass">
-            <span class="card-icon">✨</span>
-            <h3 data-i18n="h5Title"></h3>
-            <p data-i18n="h5Desc"></p>
-          </div>
-          <div class="hydration-card glass">
-            <span class="card-icon">🛡️</span>
-            <h3 data-i18n="h6Title"></h3>
-            <p data-i18n="h6Desc"></p>
-          </div>
-        </div>
 
-        <div class="water-fact glass">
-          <p data-i18n="waterFact"></p>
+          <div class="water-fact">
+            <p data-i18n="waterFact"></p>
+          </div>
         </div>
       </div>
     </section>
-
-    <div class="section-divider"></div>
 
     <!-- Features -->
     <section class="features">
       <div class="container">
-        <h2 data-i18n="featuresTitle"></h2>
-        <div class="features-grid">
-          <div class="feature-card glass">
-            <span class="icon">🖥️</span>
-            <h3 data-i18n="f1Title"></h3>
-            <p data-i18n="f1Desc"></p>
-          </div>
-          <div class="feature-card glass">
-            <span class="icon">🎵</span>
-            <h3 data-i18n="f2Title"></h3>
-            <p data-i18n="f2Desc"></p>
-          </div>
-          <div class="feature-card glass">
-            <span class="icon">💤</span>
-            <h3 data-i18n="f3Title"></h3>
-            <p data-i18n="f3Desc"></p>
-          </div>
-          <div class="feature-card glass">
-            <span class="icon">🌐</span>
-            <h3 data-i18n="f4Title"></h3>
-            <p data-i18n="f4Desc"></p>
+        <div class="liquid-glass">
+          <h2 data-i18n="featuresTitle"></h2>
+          <div class="features-grid">
+            <div class="feature-card glass-card">
+              <span class="icon">🖥️</span>
+              <h3 data-i18n="f1Title"></h3>
+              <p data-i18n="f1Desc"></p>
+            </div>
+            <div class="feature-card glass-card">
+              <span class="icon">🎵</span>
+              <h3 data-i18n="f2Title"></h3>
+              <p data-i18n="f2Desc"></p>
+            </div>
+            <div class="feature-card glass-card">
+              <span class="icon">💤</span>
+              <h3 data-i18n="f3Title"></h3>
+              <p data-i18n="f3Desc"></p>
+            </div>
+            <div class="feature-card glass-card">
+              <span class="icon">🌐</span>
+              <h3 data-i18n="f4Title"></h3>
+              <p data-i18n="f4Desc"></p>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <div class="section-divider"></div>
-
     <!-- Footer -->
     <footer>
       <div class="container">
-        <div class="footer-links">
-          <a href="https://github.com/Cat1m/breaktime">GitHub</a>
-          <a href="https://ko-fi.com/minhchienle">Ko-fi</a>
-          <a href="https://paypal.me/ArcaRyze">PayPal</a>
+        <div class="liquid-glass footer-inner">
+          <div class="footer-links">
+            <a href="https://github.com/Cat1m/breaktime">GitHub</a>
+            <a href="https://ko-fi.com/minhchienle">Ko-fi</a>
+            <a href="https://paypal.me/ArcaRyze">PayPal</a>
+          </div>
+          <p class="footer-tagline" data-i18n="footerTagline"></p>
         </div>
-        <p class="footer-tagline" data-i18n="footerTagline"></p>
       </div>
     </footer>
 
