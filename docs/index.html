@@ -13,19 +13,19 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg-deep: #020b1a;
-      --bg-ocean: #041e42;
-      --glass: rgba(255, 255, 255, 0.06);
-      --glass-border: rgba(255, 255, 255, 0.12);
-      --glass-hover: rgba(255, 255, 255, 0.1);
-      --text: #e8f0fe;
-      --text-muted: #8eafc8;
-      --primary: #38bdf8;
-      --primary-glow: rgba(56, 189, 248, 0.35);
+      --bg-deep: #e6f4fb;
+      --bg-ocean: #cce8f7;
+      --glass: rgba(255, 255, 255, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.6);
+      --glass-hover: rgba(255, 255, 255, 0.6);
+      --text: #1a3a4a;
+      --text-muted: #4a7a8f;
+      --primary: #0ea5e9;
+      --primary-glow: rgba(14, 165, 233, 0.3);
       --accent: #06d6a0;
-      --water-light: #67e8f9;
-      --water-mid: #22d3ee;
-      --water-deep: #0891b2;
+      --water-light: #0284c7;
+      --water-mid: #0891b2;
+      --water-deep: #0369a1;
     }
 
     body {
@@ -44,7 +44,7 @@
       inset: 0;
       z-index: 0;
       overflow: hidden;
-      background: linear-gradient(170deg, #020b1a 0%, #041e42 30%, #0c3155 60%, #0a2a4a 100%);
+      background: linear-gradient(170deg, #d4eef9 0%, #b8e2f6 30%, #a0d8f2 60%, #c2e6f8 100%);
     }
 
     .water-bg::before {
@@ -54,9 +54,9 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(ellipse at 30% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
-                  radial-gradient(ellipse at 70% 60%, rgba(6, 214, 160, 0.06) 0%, transparent 50%),
-                  radial-gradient(ellipse at 50% 80%, rgba(34, 211, 238, 0.05) 0%, transparent 40%);
+      background: radial-gradient(ellipse at 30% 20%, rgba(14, 165, 233, 0.15) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 60%, rgba(6, 214, 160, 0.1) 0%, transparent 50%),
+                  radial-gradient(ellipse at 50% 80%, rgba(56, 189, 248, 0.12) 0%, transparent 40%);
       animation: drift 20s ease-in-out infinite;
     }
 
@@ -79,8 +79,8 @@
       position: absolute;
       bottom: -80px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, rgba(103, 232, 249, 0.25), rgba(56, 189, 248, 0.08));
-      border: 1px solid rgba(103, 232, 249, 0.12);
+      background: radial-gradient(circle at 30% 30%, rgba(14, 165, 233, 0.2), rgba(56, 189, 248, 0.06));
+      border: 1px solid rgba(14, 165, 233, 0.15);
       animation: rise linear infinite;
     }
 
@@ -110,9 +110,9 @@
       height: 100%;
     }
 
-    .wave path { fill: rgba(56, 189, 248, 0.04); }
-    .wave:nth-child(2) path { fill: rgba(34, 211, 238, 0.03); }
-    .wave:nth-child(3) path { fill: rgba(6, 214, 160, 0.02); }
+    .wave path { fill: rgba(14, 165, 233, 0.1); }
+    .wave:nth-child(2) path { fill: rgba(56, 189, 248, 0.08); }
+    .wave:nth-child(3) path { fill: rgba(6, 182, 212, 0.06); }
 
     .wave { animation: wave-sway 8s ease-in-out infinite; }
     .wave:nth-child(2) { animation: wave-sway 10s ease-in-out infinite reverse; }
@@ -144,10 +144,10 @@
       top: 16px;
       right: 16px;
       z-index: 100;
-      background: rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.5);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--glass-border);
+      border: 1px solid rgba(255,255,255,0.7);
       border-radius: 10px;
       padding: 8px 14px;
       color: var(--text-muted);
@@ -159,7 +159,7 @@
     .lang-toggle:hover {
       border-color: var(--primary);
       color: var(--text);
-      background: rgba(56, 189, 248, 0.1);
+      background: rgba(255,255,255,0.7);
     }
 
     /* ── Hero ── */
@@ -168,7 +168,7 @@
       font-size: 80px;
       margin-bottom: 20px;
       display: block;
-      filter: drop-shadow(0 0 30px rgba(56, 189, 248, 0.4));
+      filter: drop-shadow(0 0 30px rgba(14, 165, 233, 0.35));
       animation: float 4s ease-in-out infinite;
     }
 
@@ -182,7 +182,7 @@
       font-weight: 800;
       letter-spacing: -2px;
       margin-bottom: 10px;
-      background: linear-gradient(135deg, #e8f0fe 0%, #67e8f9 50%, #38bdf8 100%);
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 40%, #0ea5e9 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -230,11 +230,11 @@
     }
 
     .btn-ghost {
-      background: var(--glass);
+      background: rgba(255,255,255,0.45);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       color: var(--text-muted);
-      border: 1px solid var(--glass-border);
+      border: 1px solid rgba(255,255,255,0.6);
       padding: 10px 20px;
       font-size: 14px;
     }
@@ -242,7 +242,7 @@
       border-color: var(--primary);
       color: var(--text);
       text-decoration: none;
-      background: rgba(56, 189, 248, 0.08);
+      background: rgba(255,255,255,0.65);
     }
     .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: 10px; }
 
@@ -252,13 +252,13 @@
     .trust-note {
       margin-top: 24px;
       padding: 16px 22px;
-      background: rgba(234, 179, 8, 0.06);
+      background: rgba(234, 179, 8, 0.1);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(234, 179, 8, 0.15);
+      border: 1px solid rgba(234, 179, 8, 0.25);
       border-radius: 14px;
       font-size: 13px;
-      color: #d4a017;
+      color: #92710a;
       line-height: 1.6;
       max-width: 500px;
       margin-left: auto;
@@ -267,8 +267,8 @@
     }
     .trust-note summary { cursor: pointer; font-weight: 600; text-align: center; list-style: none; }
     .trust-note summary::-webkit-details-marker { display: none; }
-    .trust-note .steps { margin-top: 10px; color: var(--text-muted); }
-    .trust-note .steps strong { color: var(--text); }
+    .trust-note .steps { margin-top: 10px; color: #6b5a1e; }
+    .trust-note .steps strong { color: #4a3d10; }
 
     .other-toggle {
       color: var(--text-muted);
@@ -288,7 +288,7 @@
     /* ── Section divider ── */
     .section-divider {
       height: 1px;
-      background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+      background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.2), transparent);
       margin: 0 auto;
       max-width: 600px;
     }
@@ -317,7 +317,7 @@
     .screenshots-grid img:hover {
       transform: scale(1.02);
       border-color: var(--primary);
-      box-shadow: 0 8px 32px rgba(56, 189, 248, 0.15);
+      box-shadow: 0 8px 32px rgba(14, 165, 233, 0.2);
     }
 
     /* ── Lightbox ── */
@@ -326,7 +326,7 @@
       position: fixed;
       inset: 0;
       z-index: 200;
-      background: rgba(2, 11, 26, 0.92);
+      background: rgba(10, 50, 80, 0.85);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       align-items: center;
@@ -365,17 +365,17 @@
       transition: all 0.3s;
     }
     .hydration-card:hover {
-      background: var(--glass-hover);
-      border-color: rgba(56, 189, 248, 0.2);
+      background: rgba(255,255,255,0.65);
+      border-color: rgba(14, 165, 233, 0.3);
       transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(56, 189, 248, 0.08);
+      box-shadow: 0 12px 40px rgba(14, 165, 233, 0.12);
     }
 
     .hydration-card .card-icon {
       font-size: 36px;
       display: block;
       margin-bottom: 14px;
-      filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.3));
+      filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.25));
     }
     .hydration-card h3 {
       font-size: 15px;
@@ -393,8 +393,8 @@
       margin-top: 36px;
       padding: 24px 28px;
       text-align: center;
-      background: rgba(56, 189, 248, 0.04);
-      border: 1px solid rgba(56, 189, 248, 0.12);
+      background: rgba(14, 165, 233, 0.08);
+      border: 1px solid rgba(14, 165, 233, 0.18);
     }
     .water-fact p {
       font-size: 15px;
@@ -420,16 +420,16 @@
       transition: all 0.3s;
     }
     .feature-card:hover {
-      background: var(--glass-hover);
-      border-color: rgba(56, 189, 248, 0.2);
+      background: rgba(255,255,255,0.65);
+      border-color: rgba(14, 165, 233, 0.3);
       transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(56, 189, 248, 0.08);
+      box-shadow: 0 8px 32px rgba(14, 165, 233, 0.12);
     }
     .feature-card .icon {
       font-size: 28px;
       margin-bottom: 12px;
       display: block;
-      filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.2));
+      filter: drop-shadow(0 0 8px rgba(14, 165, 233, 0.2));
     }
     .feature-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
     .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
